@@ -6,6 +6,7 @@
 #endif
 
 enum Status {
+  OK_DONE,
   UNCATEGORIZED,
 };
 

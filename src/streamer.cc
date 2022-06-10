@@ -24,7 +24,7 @@ int setup_server() {
   unlink(local.sun_path);
 
   len = strlen(local.sun_path) + sizeof(local.sun_family) + 1;
-  if (bind(server_socket, (struct sockaddr *)&local, len) == -1) {
+  if (bind(server_socket, (sockaddr *)&local, len) == -1) {
     printf("Socket failed to bind\n");
     return -1;
   }
@@ -37,12 +37,72 @@ int setup_server() {
   return server_socket;
 }
 
+void handle_client(int client_socket) {
+  bool finished = false;
+
+  printf("Connected to socket: %d.\n", client_socket);
+
+  // Create two packets, one from which to read and one from which to receive
+  Packet send_message;
+  Packet recv_message;
+
+  // Just echo back client message with OK status for now
+  while (!finished) {
+    ssize_t length = recv(client_socket, &recv_message, sizeof(Packet), 0);
+    if (length < 0) {
+      printf("Client connection closed!\n");
+      exit(1);
+    } else if (length == 0) {
+      finished = true;
+    }
+
+    if (!finished) {
+      char recv_buffer[recv_message.length + 1];
+      length = recv(client_socket, recv_buffer, recv_message.length,0);
+      recv_message.payload = recv_buffer;
+      recv_message.payload[recv_message.length] = '\0';
+
+      send_message.length = recv_message.length;
+      char send_buffer[send_message.length + 1];
+      strcpy(send_buffer, recv_buffer);
+      send_message.payload = send_buffer;
+      send_message.status = OK_DONE;
+
+      // Send status of the received message (OK, UNKNOWN_QUERY, etc)
+      int r = send(client_socket, &send_message, sizeof(Packet), 0);
+      if (r == -1) {
+          printf("Failed to send message.");
+          exit(1);
+      }
+
+      // Send response to the request
+      r = send(client_socket, send_message.payload, send_message.length, 0);
+      if (r == -1) {
+          printf("Failed to send message.");
+          exit(1);
+      }
+    }
+  }
+
+  printf("Connection closed at socket %d\n", client_socket);
+  close(client_socket);
+}
+
 int main() {
-  std::cout << "Hello World!\n";
   int server_socket = setup_server();
   if (server_socket < 0) {
     exit(1);
   }
   printf("Server socket %d waiting for a connection...\n", server_socket);
+
+  sockaddr_un remote;
+  socklen_t len = sizeof(remote);
+  int client_socket = accept(server_socket, (sockaddr *)&remote, &len);
+  if (client_socket == -1) {
+    printf("Failed to accept a new connection\n");
+    exit(1);
+  }
+
+  handle_client(client_socket);
   return 0;
 }
