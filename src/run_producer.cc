@@ -10,34 +10,13 @@
 #include <sys/un.h>
 
 #include "common.h"
+#include "producer.h"
 
 #define STDIN_BUFSIZE 1024
 
-int connect_producer() {
-  int client_socket;
-  size_t len;
-  sockaddr_un remote;
-
-  printf("Attempting to connect...\n");
-  client_socket = socket(AF_UNIX, SOCK_STREAM, 0);
-  if (client_socket == -1) {
-    printf("L%d: Failed to create socket!\n", __LINE__);
-  }
-
-  remote.sun_family = AF_UNIX;
-  strncpy(remote.sun_path, SOCK_PATH, strlen(SOCK_PATH) + 1);
-  len = strlen(remote.sun_path) + sizeof(remote.sun_family) + 1;
-  if (connect(client_socket, (sockaddr *)&remote, len) == -1) {
-    printf("Connection failed\n");
-    return -1;
-  }
-
-  printf("Producer connected at socket %d\n", client_socket);
-  return client_socket;
-}
-
 int main() {
-  int client_socket = connect_producer();
+  Producer *prod = new Producer;
+  int client_socket = prod->connect_to_server();
   if (client_socket < 0) {
     exit(1);
   }
