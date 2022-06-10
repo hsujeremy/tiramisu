@@ -1,6 +1,8 @@
 CC = g++ -std=c++14
 override CFLAGS += -Wall -W -Wshadow -Wno-format -Wno-unused-parameter
 
+all: streamer producer
+
 streamer: streamer.o
 	$(CC) $(CFLAGS) streamer.o -o streamer
 
