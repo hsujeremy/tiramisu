@@ -6,9 +6,7 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
-#ifndef SOCK_PATH
-#define SOCK_PATH "producer_unix_socket"
-#endif
+#include "common.h"
 
 int connect_producer() {
   int client_socket;
@@ -34,6 +32,10 @@ int connect_producer() {
 }
 
 int main() {
-  std::cout << "Hello World!\n";
+  int client_socket = connect_producer();
+  if (client_socket < 0) {
+    exit(1);
+  }
+
   return 0;
 }
