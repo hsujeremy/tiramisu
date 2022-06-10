@@ -7,5 +7,11 @@ streamer: streamer.o
 streamer.o: streamer.cc
 	$(CC) $(CFLAGS) -c streamer.cc
 
+producer: producer.o
+	$(CC) $(CFLAGS) producer.o -o producer
+
+producer.o: producer.cc
+	$(CC) $(CFLAGS) -c producer.cc
+
 clean:
-	rm -f *.o streamer
+	rm -f *.o streamer producer
