@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Local
+.vscode
+status.current_container_id
