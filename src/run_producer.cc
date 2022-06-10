@@ -1,7 +1,6 @@
 #define _XOPEN_SOURCE
 
 #include <iostream>
-#include <cassert>
 
 #include <unistd.h>
 
