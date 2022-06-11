@@ -42,7 +42,7 @@ int setup_server() {
   return server_socket;
 }
 
-void handle_client(int client_socket) {
+void handle_client(const int client_socket) {
   if (!broker) {
     printf("Broker not initialized!\n");
     return;
