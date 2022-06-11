@@ -17,12 +17,16 @@ struct ProducerClient {
   void connect_to_server();
   void close_connection();
 
-  // init_transactions()
+  // ProducerClient::init_transactions()
   //   Gets the transactional ID for this producer back from the server and
   //   sets the state of the producer client accordingly. Returns the
   //   transactional ID on success and -1 otherwise.
   int init_transactions();
 
+  // ProducerClient::close_producer()
+  //   Changes the state back to UNINITIALIZED. Must call `init_transactions()`
+  //   again before making any further transactions.
+  void close_producer();
 };
 
 #endif

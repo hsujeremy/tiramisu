@@ -42,6 +42,7 @@ void ProducerClient::close_connection() {
   if (close(client_socket) < 0) {
     printf("Failed to close connection\n");
   }
+  state = DISCONNECTED;
   printf("Successfully closed connection\n");
 }
 
@@ -105,5 +106,11 @@ int ProducerClient::init_transactions() {
   printf("transactional_id from server: %s\n", payload);
   // TODO: Handle the case where payload cannot be cleanly casted
   transactional_id = std::stoi(payload);
+  state = INITIALIZED;
   return transactional_id;
+}
+
+void ProducerClient::close_producer() {
+  assert(state == INITIALIZED);
+  state = UNINITIALIZED;
 }
