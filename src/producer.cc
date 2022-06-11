@@ -33,10 +33,12 @@ void Producer::close_connection() {
     printf("Invalid client_socket %d\n", client_socket);
     return;
   }
+  
   if (state == DISCONNECTED) {
     printf("Connection already closed!\n");
     return;
   }
+
   if (close(client_socket) < 0) {
     printf("Failed to close connection\n");
   }
