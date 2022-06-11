@@ -18,8 +18,8 @@ int main() {
     exit(1);
   }
 
-  Packet send_message;
-  Packet recv_message;
+  Message send_message;
+  Message recv_message;
 
   // Continuously loop and wait for user input. At each iteration, output an
   // interactive marker and read from stdin until EOF
@@ -40,7 +40,7 @@ int main() {
 
     if (send_message.length > 1) {
       // First send header to the server
-      int r = send(prod->client_socket, &send_message, sizeof(Packet), 0);
+      int r = send(prod->client_socket, &send_message, sizeof(Message), 0);
       if (r == -1) {
         printf("Failed to send message header\n");
         exit(1);
@@ -54,7 +54,7 @@ int main() {
       }
 
       // Always wait for a response from the server, even if it just an OK
-      ssize_t len = recv(prod->client_socket, &recv_message, sizeof(Packet), 0);
+      ssize_t len = recv(prod->client_socket, &recv_message, sizeof(Message), 0);
       if (len > 0) {
         if (recv_message.status == OK_DONE && recv_message.length > 0) {
           unsigned nbytes = recv_message.length;

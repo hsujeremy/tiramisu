@@ -10,7 +10,7 @@ enum Status {
   UNCATEGORIZED,
 };
 
-struct Packet {
+struct Message {
   Status status;
   unsigned length;
   char *payload;

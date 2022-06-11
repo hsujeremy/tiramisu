@@ -63,12 +63,12 @@ void Server::handle_client(const int client_socket) {
   printf("Connected to socket: %d.\n", client_socket);
 
   // Create two packets, one from which to read and one from which to receive
-  Packet send_message;
-  Packet recv_message;
+  Message send_message;
+  Message recv_message;
 
   // Just echo back client message with OK status for now
   while (!finished) {
-    ssize_t length = recv(client_socket, &recv_message, sizeof(Packet), 0);
+    ssize_t length = recv(client_socket, &recv_message, sizeof(Message), 0);
     if (length < 0) {
       printf("Client connection closed!\n");
       exit(1);
@@ -95,7 +95,7 @@ void Server::handle_client(const int client_socket) {
       send_message.status = OK_DONE;
 
       // Send status of the received message (OK, UNKNOWN_QUERY, etc)
-      int r = send(client_socket, &send_message, sizeof(Packet), 0);
+      int r = send(client_socket, &send_message, sizeof(Message), 0);
       if (r == -1) {
           printf("Failed to send message.");
           exit(1);
