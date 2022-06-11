@@ -35,5 +35,5 @@
 .vscode
 status.current_container_id
 **run_producer
-**streamer
+**server
 **producer_unix_socket
