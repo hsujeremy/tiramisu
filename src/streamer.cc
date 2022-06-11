@@ -4,6 +4,19 @@
 #include <sys/un.h>
 #include "common.h"
 
+enum RequestedAction {
+  INIT_TRANSACTIONS,
+  UNKNOWN_ACTION,
+};
+
+RequestedAction parse_request(const std::string request) {
+  // Parse the string and return the request
+  if (request.compare("init_transactions") == 0) {
+    return INIT_TRANSACTIONS;
+  }
+  return UNKNOWN_ACTION;
+}
+
 int setup_server() {
   int server_socket;
   size_t len;
@@ -58,6 +71,10 @@ void handle_client(int client_socket) {
       length = recv(client_socket, recv_buffer, recv_message.length, 0);
       recv_message.payload = recv_buffer;
       recv_message.payload[recv_message.length] = '\0';
+
+      // Now start to parse the message
+      std::string client_request(recv_message.payload);
+      RequestedAction _ = parse_request(client_request);
 
       send_message.length = recv_message.length;
       char send_buffer[send_message.length + 1];

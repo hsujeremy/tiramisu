@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -40,4 +41,17 @@ void Producer::close_connection() {
     printf("Failed to close connection\n");
   }
   printf("Successfully closed connection\n");
+}
+
+void Producer::init_transactions() {
+  if (client_socket < 0 || state == DISCONNECTED) {
+    printf("Client not connected to server\n");
+    return;
+  }
+
+  // Assume for now that there this function is not called twice
+  assert(state == UNINITIALIZED);
+
+  // Make a request to the server to set up the transactional_id
+  // The server will either return the transactional_id or -1 on failure
 }
