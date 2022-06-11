@@ -35,7 +35,7 @@ struct BrokerManager {
   Server *server;
   Producer *producers[MAX_PRODUCERS] = {nullptr};
 
-  RequestedAction parse_request(const std::string request);
+  RequestedAction parse_request(const char *request);
   int execute(ClientType client, RequestedAction action);
 };
 

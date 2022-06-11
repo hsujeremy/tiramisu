@@ -17,7 +17,11 @@ struct ProducerClient {
   void connect_to_server();
   void close_connection();
 
-  void init_transactions();
+  // init_transactions()
+  //   Gets the transactional ID for this producer back from the server and
+  //   sets the state of the producer client accordingly. Returns the
+  //   transactional ID on success and -1 otherwise.
+  int init_transactions();
 
 };
 

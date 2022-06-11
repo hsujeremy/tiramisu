@@ -1,3 +1,4 @@
+#include <cstring>
 #include "broker.h"
 
 Producer::Producer(int client_socket, int id) {
@@ -5,9 +6,9 @@ Producer::Producer(int client_socket, int id) {
   transactional_id = id;
 }
 
-RequestedAction BrokerManager::parse_request(const std::string request) {
-   // Parse the string and return the request
-  if (request.compare("init_transactions") == 0) {
+RequestedAction BrokerManager::parse_request(const char *request) {
+  // Parse the string and return the request
+  if (strcmp(request, "init_transactions") == 0) {
     return INIT_TRANSACTIONS;
   }
   return UNKNOWN_ACTION;
@@ -38,5 +39,6 @@ int BrokerManager::execute(ClientType client, RequestedAction action) {
       result = 0;
       break;
   }
+  printf("result %d\n", result);
   return result;
 }
