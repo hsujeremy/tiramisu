@@ -5,11 +5,11 @@
 #include "broker.h"
 #include "common.h"
 
-Broker *broker = nullptr;
+BrokerManager *broker = nullptr;
 
 void Server::setup() {
   if (!broker) {
-    printf("Broker not initialized!\n");
+    printf("BrokerManager not initialized!\n");
     return;
   }
 
@@ -40,7 +40,7 @@ void Server::setup() {
 
 void Server::handle_client(const int client_socket) {
   if (!broker) {
-    printf("Broker not initialized!\n");
+    printf("BrokerManager not initialized!\n");
     return;
   }
 
@@ -117,7 +117,7 @@ void Server::handle_client(const int client_socket) {
 }
 
 int main() {
-  broker = new Broker();
+  broker = new BrokerManager();
   Server *server = new Server();
   broker->server = server;
   server->setup();

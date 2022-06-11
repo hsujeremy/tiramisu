@@ -5,7 +5,7 @@ ProducerMetadata::ProducerMetadata(int client_socket, int id) {
   transactional_id = id;
 }
 
-RequestedAction Broker::parse_request(const std::string request) {
+RequestedAction BrokerManager::parse_request(const std::string request) {
    // Parse the string and return the request
   if (request.compare("init_transactions") == 0) {
     return INIT_TRANSACTIONS;
@@ -13,11 +13,11 @@ RequestedAction Broker::parse_request(const std::string request) {
   return UNKNOWN_ACTION;
 }
 
-int Broker::init_transactions() {
+int BrokerManager::init_transactions() {
   return 1;
 }
 
-int Broker::execute(RequestedAction action) {
+int BrokerManager::execute(RequestedAction action) {
   int result = 0;
   switch (action) {
     case INIT_TRANSACTIONS:

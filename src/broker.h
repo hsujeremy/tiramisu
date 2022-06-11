@@ -26,7 +26,7 @@ struct ProducerMetadata {
   ProducerMetadata(int client_socket, int id);
 };
 
-struct Broker {
+struct BrokerManager {
   Server *server;
   ProducerMetadata *producers[MAX_PRODUCERS] = {nullptr};
 
