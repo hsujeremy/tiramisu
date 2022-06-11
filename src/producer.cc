@@ -23,12 +23,17 @@ void Producer::connect_to_server() {
     return;
   }
 
+  state = UNINITIALIZED;
   printf("Producer connected at socket %d\n", client_socket);
 }
 
 void Producer::close_connection() {
   if (client_socket < 0) {
     printf("Invalid client_socket %d\n", client_socket);
+    return;
+  }
+  if (state == DISCONNECTED) {
+    printf("Connection already closed!\n");
     return;
   }
   if (close(client_socket) < 0) {
