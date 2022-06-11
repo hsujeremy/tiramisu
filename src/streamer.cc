@@ -22,13 +22,17 @@ RequestedAction parse_request(const std::string request) {
 }
 
 int execute(RequestedAction action) {
+  int result = 0;
   switch (action) {
     case INIT_TRANSACTIONS:
-      return init_transactions();
+      result = init_transactions();
+      break;
 
     case UNKNOWN_ACTION:
-      return 0;
+      result = 0;
+      break;
   }
+  return result;
 }
 
 int setup_server() {
