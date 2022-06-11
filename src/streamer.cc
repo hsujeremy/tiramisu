@@ -55,7 +55,7 @@ void handle_client(int client_socket) {
 
     if (!finished) {
       char recv_buffer[recv_message.length + 1];
-      length = recv(client_socket, recv_buffer, recv_message.length,0);
+      length = recv(client_socket, recv_buffer, recv_message.length, 0);
       recv_message.payload = recv_buffer;
       recv_message.payload[recv_message.length] = '\0';
 
