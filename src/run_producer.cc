@@ -78,6 +78,6 @@ int main() {
     }
   }
 
-  close(prod->client_socket);
+  prod->close_connection();
   return 0;
 }

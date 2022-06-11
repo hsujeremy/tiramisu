@@ -28,3 +28,14 @@ void Producer::connect_to_server() {
 
   printf("Producer connected at socket %d\n", client_socket);
 }
+
+void Producer::close_connection() {
+  if (client_socket < 0) {
+    printf("Invalid client_socket %d\n", client_socket);
+    return;
+  }
+  if (close(client_socket) < 0) {
+    printf("Failed to close connection\n");
+  }
+  printf("Successfully closed connection\n");
+}
