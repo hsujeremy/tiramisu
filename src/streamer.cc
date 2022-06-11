@@ -4,6 +4,10 @@
 #include <sys/un.h>
 #include "common.h"
 
+int init_transactions() {
+  return 1;
+}
+
 enum RequestedAction {
   INIT_TRANSACTIONS,
   UNKNOWN_ACTION,
@@ -15,6 +19,16 @@ RequestedAction parse_request(const std::string request) {
     return INIT_TRANSACTIONS;
   }
   return UNKNOWN_ACTION;
+}
+
+int execute(RequestedAction action) {
+  switch (action) {
+    case INIT_TRANSACTIONS:
+      return init_transactions();
+
+    case UNKNOWN_ACTION:
+      return 0;
+  }
 }
 
 int setup_server() {
@@ -74,11 +88,13 @@ void handle_client(int client_socket) {
 
       // Now start to parse the message
       std::string client_request(recv_message.payload);
-      RequestedAction _ = parse_request(client_request);
+      RequestedAction action = parse_request(client_request);
+      int result = execute(action);
+      std::string serialized_result = std::to_string(result);
 
-      send_message.length = recv_message.length;
+      send_message.length = serialized_result.length();
       char send_buffer[send_message.length + 1];
-      strcpy(send_buffer, recv_buffer);
+      strcpy(send_buffer, serialized_result.c_str());
       send_message.payload = send_buffer;
       send_message.status = OK_DONE;
 
