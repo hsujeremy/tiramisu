@@ -4,7 +4,10 @@
 #include "common.h"
 
 struct Producer {
-  int connect_to_server();
+  int client_socket;
+
+  void connect_to_server();
+  void close_connection();
 };
 
 #endif

@@ -8,8 +8,7 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
-int Producer::connect_to_server() {
-  int client_socket;
+void Producer::connect_to_server() {
   size_t len;
   sockaddr_un remote;
 
@@ -24,9 +23,8 @@ int Producer::connect_to_server() {
   len = strlen(remote.sun_path) + sizeof(remote.sun_family) + 1;
   if (connect(client_socket, (sockaddr *)&remote, len) == -1) {
     printf("Connection failed\n");
-    return -1;
+    return;
   }
 
   printf("Producer connected at socket %d\n", client_socket);
-  return client_socket;
 }
