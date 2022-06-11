@@ -5,6 +5,10 @@
 
 #define MAX_PRODUCERS 1
 
+enum ClientType {
+  PRODUCER,
+};
+
 enum RequestedAction {
   INIT_TRANSACTIONS,
   UNKNOWN_ACTION,
@@ -24,6 +28,7 @@ struct Producer {
   int transactional_id;
 
   Producer(int client_socket, int id);
+  int init_transactions();
 };
 
 struct BrokerManager {
@@ -31,9 +36,7 @@ struct BrokerManager {
   Producer *producers[MAX_PRODUCERS] = {nullptr};
 
   RequestedAction parse_request(const std::string request);
-
-  int init_transactions();
-  int execute(RequestedAction action);
+  int execute(ClientType client, RequestedAction action);
 };
 
 #endif

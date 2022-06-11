@@ -13,15 +13,25 @@ RequestedAction BrokerManager::parse_request(const std::string request) {
   return UNKNOWN_ACTION;
 }
 
-int BrokerManager::init_transactions() {
-  return 1;
+int Producer::init_transactions() {
+  return transactional_id;
 }
 
-int BrokerManager::execute(RequestedAction action) {
+int BrokerManager::execute(ClientType client, RequestedAction action) {
+  // No need to distinguish between client types now since consumer-side is not
+  // implemented
+  (void)client;
+
+  Producer *producer;
+  // Trivial for now since there is at most one producer but good futureproofing
+  for (int i = 0; i < MAX_PRODUCERS; ++i) {
+    producer = producers[i];
+  }
+
   int result = 0;
   switch (action) {
     case INIT_TRANSACTIONS:
-      result = init_transactions();
+      result = producer->init_transactions();
       break;
 
     case UNKNOWN_ACTION:

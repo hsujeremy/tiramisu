@@ -85,7 +85,7 @@ void Server::handle_client(const int client_socket) {
       // Now start to parse the message
       std::string client_request(recv_message.payload);
       RequestedAction action = broker->parse_request(client_request);
-      int result = broker->execute(action);
+      int result = broker->execute(PRODUCER, action);
       std::string serialized_result = std::to_string(result);
 
       send_message.length = serialized_result.length();
