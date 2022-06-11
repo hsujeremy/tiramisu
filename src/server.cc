@@ -115,6 +115,8 @@ void handle_client(const int client_socket) {
 
   printf("Connection closed at socket %d\n", client_socket);
   close(client_socket);
+  delete broker->producers[prod_idx];
+  broker->producers[prod_idx] = nullptr;
 }
 
 int main() {
@@ -135,5 +137,8 @@ int main() {
   }
 
   handle_client(client_socket);
+  
+  delete broker;
+  broker = nullptr;
   return 0;
 }
