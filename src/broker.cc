@@ -1,5 +1,9 @@
 #include "broker.h"
 
+ProducerMetadata::ProducerMetadata(int client_socket) {
+  socket = client_socket;
+}
+
 RequestedAction Broker::parse_request(const std::string request) {
    // Parse the string and return the request
   if (request.compare("init_transactions") == 0) {

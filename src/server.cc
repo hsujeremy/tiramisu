@@ -48,6 +48,19 @@ void handle_client(int client_socket) {
     return;
   }
 
+  int prod_idx = -1;
+  for (int i = 0; i < MAX_PRODUCERS; ++i) {
+    if (!broker->producers[i]) {
+      prod_idx = i;
+      broker->producers[i] = new ProducerMetadata(client_socket);
+    }
+  }
+
+  if (prod_idx == -1) {
+    printf("No space for producer\n");
+    return;
+  }
+
   bool finished = false;
 
   printf("Connected to socket: %d.\n", client_socket);
