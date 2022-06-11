@@ -49,7 +49,7 @@ void Server::handle_client(const int client_socket) {
     if (!broker->producers[i]) {
       prod_idx = i;
       // Set index in table to be the transactional_id for that producer
-      broker->producers[i] = new ProducerMetadata(client_socket, prod_idx);
+      broker->producers[i] = new Producer(client_socket, prod_idx);
     }
   }
 

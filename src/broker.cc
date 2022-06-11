@@ -1,6 +1,6 @@
 #include "broker.h"
 
-ProducerMetadata::ProducerMetadata(int client_socket, int id) {
+Producer::Producer(int client_socket, int id) {
   socket = client_socket;
   transactional_id = id;
 }

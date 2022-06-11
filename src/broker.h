@@ -17,18 +17,18 @@ struct Server {
   void handle_client(const int client_socket);
 };
 
-struct ProducerMetadata {
+struct Producer {
   int socket;
   // Every producer has a single transactional ID during the lifetime of its
   // connection (for now)
   int transactional_id;
 
-  ProducerMetadata(int client_socket, int id);
+  Producer(int client_socket, int id);
 };
 
 struct BrokerManager {
   Server *server;
-  ProducerMetadata *producers[MAX_PRODUCERS] = {nullptr};
+  Producer *producers[MAX_PRODUCERS] = {nullptr};
 
   RequestedAction parse_request(const std::string request);
 
