@@ -7,13 +7,12 @@
 
 Broker *broker = nullptr;
 
-int setup_server() {
+void Server::setup() {
   if (!broker) {
     printf("Broker not initialized!\n");
-    return -1;
+    return;
   }
 
-  int server_socket;
   size_t len;
   sockaddr_un local;
 
@@ -21,7 +20,7 @@ int setup_server() {
   server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
   if (server_socket == -1) {
     printf("Failed to create socket\n");
-    return -1;
+    return;
   }
 
   local.sun_family = AF_UNIX;
@@ -31,18 +30,15 @@ int setup_server() {
   len = strlen(local.sun_path) + sizeof(local.sun_family) + 1;
   if (bind(server_socket, (sockaddr *)&local, len) == -1) {
     printf("Socket failed to bind\n");
-    return -1;
+    return;
   }
 
   if (listen(server_socket, 5) == -1) {
     printf("Failed to listen on socket\n");
-    return -1;
   }
-
-  return server_socket;
 }
 
-void handle_client(const int client_socket) {
+void Server::handle_client(const int client_socket) {
   if (!broker) {
     printf("Broker not initialized!\n");
     return;
@@ -52,7 +48,8 @@ void handle_client(const int client_socket) {
   for (int i = 0; i < MAX_PRODUCERS; ++i) {
     if (!broker->producers[i]) {
       prod_idx = i;
-      broker->producers[i] = new ProducerMetadata(client_socket);
+      // Set index in table to be the transactional_id for that producer
+      broker->producers[i] = new ProducerMetadata(client_socket, prod_idx);
     }
   }
 
@@ -121,23 +118,27 @@ void handle_client(const int client_socket) {
 
 int main() {
   broker = new Broker();
-
-  int server_socket = setup_server();
-  if (server_socket < 0) {
+  Server *server = new Server();
+  broker->server = server;
+  server->setup();
+  if (server->server_socket < 0) {
     exit(1);
   }
-  printf("Server socket %d waiting for a connection...\n", server_socket);
+  printf("Server socket %d waiting for a connection...\n",
+         server->server_socket);
 
   sockaddr_un remote;
   socklen_t len = sizeof(remote);
-  int client_socket = accept(server_socket, (sockaddr *)&remote, &len);
+  int client_socket = accept(server->server_socket, (sockaddr *)&remote, &len);
   if (client_socket == -1) {
     printf("Failed to accept a new connection\n");
     exit(1);
   }
 
-  handle_client(client_socket);
-  
+  server->handle_client(client_socket);
+
+  delete server;
+  broker->server = nullptr;
   delete broker;
   broker = nullptr;
   return 0;

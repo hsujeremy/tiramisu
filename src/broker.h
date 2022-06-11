@@ -10,6 +10,13 @@ enum RequestedAction {
   UNKNOWN_ACTION,
 };
 
+struct Server {
+  int server_socket = -1;
+
+  void setup();
+  void handle_client(const int client_socket);
+};
+
 struct ProducerMetadata {
   int socket;
   // Every producer has a single transactional ID during the lifetime of its
@@ -20,6 +27,7 @@ struct ProducerMetadata {
 };
 
 struct Broker {
+  Server *server;
   ProducerMetadata *producers[MAX_PRODUCERS] = {nullptr};
 
   RequestedAction parse_request(const std::string request);
