@@ -3,11 +3,14 @@ override CFLAGS += -Wall -W -Wshadow -Wno-format -Wno-unused-parameter
 
 all: server run_producer
 
-server: server.o
-	$(CC) $(CFLAGS) server.o -o server
+server: server.o broker.o
+	$(CC) $(CFLAGS) server.o broker.o -o server
 
 server.o: server.cc
 	$(CC) $(CFLAGS) -c server.cc
+
+broker.o: broker.cc broker.h
+	$(CC) $(CFLAGS) -c broker.cc
 
 run_producer: run_producer.o producer.o
 	$(CC) $(CFLAGS) run_producer.o producer.o -o run_producer

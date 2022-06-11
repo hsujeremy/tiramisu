@@ -2,40 +2,17 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include "broker.h"
 #include "common.h"
 
-int init_transactions() {
-  return 1;
-}
-
-enum RequestedAction {
-  INIT_TRANSACTIONS,
-  UNKNOWN_ACTION,
-};
-
-RequestedAction parse_request(const std::string request) {
-  // Parse the string and return the request
-  if (request.compare("init_transactions") == 0) {
-    return INIT_TRANSACTIONS;
-  }
-  return UNKNOWN_ACTION;
-}
-
-int execute(RequestedAction action) {
-  int result = 0;
-  switch (action) {
-    case INIT_TRANSACTIONS:
-      result = init_transactions();
-      break;
-
-    case UNKNOWN_ACTION:
-      result = 0;
-      break;
-  }
-  return result;
-}
+Broker *broker = nullptr;
 
 int setup_server() {
+  if (!broker) {
+    printf("Broker not initialized!\n");
+    return -1;
+  }
+
   int server_socket;
   size_t len;
   sockaddr_un local;
@@ -66,6 +43,11 @@ int setup_server() {
 }
 
 void handle_client(int client_socket) {
+  if (!broker) {
+    printf("Broker not initialized!\n");
+    return;
+  }
+
   bool finished = false;
 
   printf("Connected to socket: %d.\n", client_socket);
@@ -92,8 +74,8 @@ void handle_client(int client_socket) {
 
       // Now start to parse the message
       std::string client_request(recv_message.payload);
-      RequestedAction action = parse_request(client_request);
-      int result = execute(action);
+      RequestedAction action = broker->parse_request(client_request);
+      int result = broker->execute(action);
       std::string serialized_result = std::to_string(result);
 
       send_message.length = serialized_result.length();
@@ -123,6 +105,8 @@ void handle_client(int client_socket) {
 }
 
 int main() {
+  broker = new Broker();
+
   int server_socket = setup_server();
   if (server_socket < 0) {
     exit(1);
