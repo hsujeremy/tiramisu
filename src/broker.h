@@ -12,9 +12,11 @@ enum RequestedAction {
 
 struct ProducerMetadata {
   int socket;
+  // Every producer has a single transactional ID during the lifetime of its
+  // connection (for now)
   int transactional_id;
 
-  ProducerMetadata(int client_socket);
+  ProducerMetadata(int client_socket, int id);
 };
 
 struct Broker {

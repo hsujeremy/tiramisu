@@ -1,7 +1,8 @@
 #include "broker.h"
 
-ProducerMetadata::ProducerMetadata(int client_socket) {
+ProducerMetadata::ProducerMetadata(int client_socket, int id) {
   socket = client_socket;
+  transactional_id = id;
 }
 
 RequestedAction Broker::parse_request(const std::string request) {
