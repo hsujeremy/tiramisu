@@ -1,13 +1,10 @@
 #define _XOPEN_SOURCE
 
 #include <iostream>
-
 #include <unistd.h>
-
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
-
 #include "common.h"
 #include "producer.h"
 

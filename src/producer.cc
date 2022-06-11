@@ -1,12 +1,9 @@
-#include "producer.h"
-
 #include <iostream>
-
 #include <unistd.h>
-
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
+#include "producer.h"
 
 void Producer::connect_to_server() {
   size_t len;

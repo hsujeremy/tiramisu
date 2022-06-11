@@ -1,10 +1,7 @@
 #include <iostream>
-
 #include <unistd.h>
-
 #include <sys/socket.h>
 #include <sys/un.h>
-
 #include "common.h"
 
 int setup_server() {
