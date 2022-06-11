@@ -1,7 +1,7 @@
 CC = g++ -std=c++14
 override CFLAGS += -Wall -W -Wshadow -Wno-format -Wno-unused-parameter
 
-all: server run_producer
+all: server run_producer_client
 
 server: server.o broker.o
 	$(CC) $(CFLAGS) server.o broker.o -o server
@@ -12,14 +12,14 @@ server.o: server.cc
 broker.o: broker.cc broker.h
 	$(CC) $(CFLAGS) -c broker.cc
 
-run_producer: run_producer.o producer.o
-	$(CC) $(CFLAGS) run_producer.o producer.o -o run_producer
+run_producer_client: run_producer_client.o producer_client.o
+	$(CC) $(CFLAGS) run_producer_client.o producer_client.o -o run_producer_client
 
-run_producer.o: run_producer.cc
-	$(CC) $(CFLAGS) -c run_producer.cc
+run_producer_client.o: run_producer_client.cc
+	$(CC) $(CFLAGS) -c run_producer_client.cc
 
-producer.o: producer.cc producer.h
-	$(CC) $(CFLAGS) -c producer.cc
+producer_client.o: producer_client.cc producer_client.h
+	$(CC) $(CFLAGS) -c producer_client.cc
 
 clean:
-	rm -f *.o server run_producer
+	rm -f *.o server run_producer_client

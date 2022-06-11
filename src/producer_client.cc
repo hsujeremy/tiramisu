@@ -4,9 +4,9 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
-#include "producer.h"
+#include "producer_client.h"
 
-void Producer::connect_to_server() {
+void ProducerClient::connect_to_server() {
   size_t len;
   sockaddr_un remote;
 
@@ -28,12 +28,12 @@ void Producer::connect_to_server() {
   printf("Producer connected at socket %d\n", client_socket);
 }
 
-void Producer::close_connection() {
+void ProducerClient::close_connection() {
   if (client_socket < 0) {
     printf("Invalid client_socket %d\n", client_socket);
     return;
   }
-  
+
   if (state == DISCONNECTED) {
     printf("Connection already closed!\n");
     return;
@@ -45,7 +45,7 @@ void Producer::close_connection() {
   printf("Successfully closed connection\n");
 }
 
-void Producer::init_transactions() {
+void ProducerClient::init_transactions() {
   if (client_socket < 0 || state == DISCONNECTED) {
     printf("Client not connected to server\n");
     return;

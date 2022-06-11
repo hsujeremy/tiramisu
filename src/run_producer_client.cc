@@ -6,12 +6,13 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include "common.h"
-#include "producer.h"
+#include "producer_client.h"
 
 #define STDIN_BUFSIZE 1024
 
 int main() {
-  Producer *prod = new Producer;
+  // Tbh we can just make the transactions here for now
+  ProducerClient *prod = new ProducerClient;
   prod->connect_to_server();
   if (prod->client_socket < 0) {
     exit(1);
