@@ -133,6 +133,12 @@ void ProducerClient::send_record(int data) {
   (void)response_status;
 }
 
+void ProducerClient::commit_transaction() {
+  std::string response_status;
+  make_request("commit_transaction", &response_status);
+  (void)response_status;
+}
+
 void ProducerClient::close_producer() {
   assert(state == INITIALIZED);
   state = UNINITIALIZED;

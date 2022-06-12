@@ -20,6 +20,7 @@ enum RequestedAction {
   INIT_TRANSACTIONS,
   BEGIN_TRANSACTION,
   SEND_RECORD,
+  COMMIT_TRANSACTION,
   UNKNOWN_ACTION,
 };
 
@@ -45,6 +46,11 @@ struct Producer {
   // Producer::send_record()
   //   Creates a new row and performs a relational insert into the table.
   int send_record(std::string serialized_args);
+
+  // Producer::commit_transaction()
+  //   Commits the transaction by writing it out to disk. Frees the table and
+  //   sets `streaming` flag to false.
+  int commit_transaction();
 };
 
 struct BrokerManager {

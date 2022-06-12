@@ -23,6 +23,8 @@ RequestedAction BrokerManager::parse_request(const char *request) {
     return BEGIN_TRANSACTION;
   } else if (strncmp(request, "send_record", 11) == 0) {
     return SEND_RECORD;
+  } else if (strcmp(request, "commit_transaction") == 0) {
+    return COMMIT_TRANSACTION;
   }
   return UNKNOWN_ACTION;
 }
@@ -61,6 +63,13 @@ int Producer::send_record(std::string serialized_args) {
   return 0;
 }
 
+int Producer::commit_transaction() {
+  assert(table);
+  table->flush_to_disk();
+  streaming = false;
+  return 0;
+}
+
 int BrokerManager::execute(ClientType client, RequestedAction action,
                            std::string serialized_args) {
   // No need to distinguish between client types now since consumer-side is not
@@ -85,6 +94,10 @@ int BrokerManager::execute(ClientType client, RequestedAction action,
 
     case SEND_RECORD:
       result = producer->send_record(serialized_args);
+      break;
+
+    case COMMIT_TRANSACTION:
+      result = producer->commit_transaction();
       break;
 
     case UNKNOWN_ACTION:

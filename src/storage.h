@@ -13,6 +13,8 @@ struct Row {
 struct Table {
   std::vector<Row> rows;
   void insert_row(int data, std::time_t event_time);
+
+  void flush_to_disk();
 };
 
 #endif
