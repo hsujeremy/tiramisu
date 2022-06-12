@@ -20,6 +20,7 @@ int main() {
 
   prod->init_transactions();
   prod->begin_transaction();
+  prod->send_record(1);
   prod->close_producer();
   prod->close_connection();
 

@@ -19,6 +19,7 @@ enum ClientType {
 enum RequestedAction {
   INIT_TRANSACTIONS,
   BEGIN_TRANSACTION,
+  SEND_RECORD,
   UNKNOWN_ACTION,
 };
 
@@ -37,6 +38,10 @@ struct Producer {
   //   Return the transactional ID.
   int init_transactions();
 
+  // Producer::send_record()
+  //   Creates a new row and performs a relational insert into the table.
+  int send_record(std::string serialized_args);
+
   // Producer::begin_transaction()
   //   Creates a new record table. Returns 0 on success and -1 otherwise.
   int begin_transaction();
@@ -47,7 +52,10 @@ struct BrokerManager {
   Producer *producers[MAX_PRODUCERS] = {nullptr};
 
   RequestedAction parse_request(const char *request);
-  int execute(ClientType client, RequestedAction action);
+
+  // BrokerManager::execute(client, action)
+  int execute(ClientType client, RequestedAction action,
+              std::string serialized_args);
 };
 
 #endif

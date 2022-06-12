@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -85,7 +86,9 @@ void Server::handle_client(const int client_socket) {
       // Now start to parse the message
       const char *client_request = recv_message.payload;
       RequestedAction action = broker->parse_request(client_request);
-      int result = broker->execute(PRODUCER, action);
+
+      std::string serialized_args(client_request);
+      int result = broker->execute(PRODUCER, action, serialized_args);
       std::string serialized_result = std::to_string(result);
 
       send_message.length = serialized_result.length();

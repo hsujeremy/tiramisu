@@ -1,4 +1,5 @@
 #include <cassert>
+#include <ctime>
 #include <iostream>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -120,6 +121,15 @@ int ProducerClient::init_transactions() {
 void ProducerClient::begin_transaction() {
   std::string response_status;
   make_request("begin_transaction", &response_status);
+  (void)response_status;
+}
+
+void ProducerClient::send_record(int data) {
+  std::string response_status;
+  std::time_t event_time = std::time(nullptr);
+  std::string request =
+    "send_record," + std::to_string(data) + "," + std::to_string(event_time);
+  make_request(request, &response_status);
   (void)response_status;
 }
 

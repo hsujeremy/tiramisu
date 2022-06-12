@@ -1,4 +1,7 @@
+#include <cassert>
 #include <cstring>
+#include <sstream>
+#include <vector>
 #include "broker.h"
 
 Producer::Producer(int client_socket, int id) {
@@ -18,12 +21,34 @@ RequestedAction BrokerManager::parse_request(const char *request) {
     return INIT_TRANSACTIONS;
   } else if (strcmp(request, "begin_transaction") == 0) {
     return BEGIN_TRANSACTION;
+  } else if (strncmp(request, "send_record", 11) == 0) {
+    return SEND_RECORD;
   }
   return UNKNOWN_ACTION;
 }
 
 int Producer::init_transactions() {
   return transactional_id;
+}
+
+int Producer::send_record(std::string serialized_args) {
+  // Split serialized request into arguments
+  std::vector<std::string> substrings;
+  std::stringstream sstream(serialized_args);
+  while (sstream.good()) {
+    std::string substring;
+    std::getline(sstream, substring, ',');
+    substrings.push_back(substring);
+  }
+
+  // Convert data and event_time parameters back to their original types
+  assert(substrings.size() == 3 && substrings[0].compare("send_record") == 0);
+  int data = std::stoi(substrings[1]);
+  std::time_t event_time = std::stol(substrings[2]);
+
+  assert(table);
+  table->insert_row(data, event_time);
+  return 0;
 }
 
 int Producer::begin_transaction() {
@@ -36,7 +61,8 @@ int Producer::begin_transaction() {
   return 0;
 }
 
-int BrokerManager::execute(ClientType client, RequestedAction action) {
+int BrokerManager::execute(ClientType client, RequestedAction action,
+                           std::string serialized_args) {
   // No need to distinguish between client types now since consumer-side is not
   // implemented
   (void)client;
@@ -55,6 +81,10 @@ int BrokerManager::execute(ClientType client, RequestedAction action) {
 
     case BEGIN_TRANSACTION:
       result = producer->begin_transaction();
+      break;
+
+    case SEND_RECORD:
+      result = producer->send_record(serialized_args);
       break;
 
     case UNKNOWN_ACTION:

@@ -31,6 +31,8 @@ struct ProducerClient {
 
   void begin_transaction();
 
+  void send_record(int data);
+
   // ProducerClient::close_producer()
   //   Changes the state back to UNINITIALIZED. Must call `init_transactions()`
   //   again before making any further transactions.
