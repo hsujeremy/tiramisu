@@ -136,9 +136,9 @@ int main() {
   }
 
   server->handle_client(client_socket);
-
   delete server;
   broker->server = nullptr;
+
   delete broker;
   broker = nullptr;
   return 0;
