@@ -29,6 +29,8 @@ struct ProducerClient {
   //   transactional ID on success and -1 otherwise.
   int init_transactions();
 
+  void begin_transaction();
+
   // ProducerClient::close_producer()
   //   Changes the state back to UNINITIALIZED. Must call `init_transactions()`
   //   again before making any further transactions.
