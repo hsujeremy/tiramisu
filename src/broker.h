@@ -18,6 +18,7 @@ enum ClientType {
 
 enum RequestedAction {
   INIT_TRANSACTIONS,
+  BEGIN_TRANSACTION,
   UNKNOWN_ACTION,
 };
 
@@ -33,6 +34,10 @@ struct Producer {
   // Producer::init_transactions()
   //   Return the transactional ID.
   int init_transactions();
+
+  // Producer::begin_transaction()
+  //   Creates a new record table. Returns 0 on success and -1 otherwise.
+  int begin_transaction();
 };
 
 struct BrokerManager {

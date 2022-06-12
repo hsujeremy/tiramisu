@@ -19,6 +19,7 @@ int main() {
   }
 
   prod->init_transactions();
+  prod->begin_transaction();
   prod->close_producer();
   prod->close_connection();
   return 0;
