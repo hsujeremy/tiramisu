@@ -31,6 +31,16 @@ int Producer::init_transactions() {
   return transactional_id;
 }
 
+int Producer::begin_transaction() {
+  table = new Table();
+  if (!table) {
+    printf("Failed to allocate space for table!\n");
+    return -1;
+  }
+  streaming = true;
+  return 0;
+}
+
 int Producer::send_record(std::string serialized_args) {
   // Split serialized request into arguments
   std::vector<std::string> substrings;
@@ -48,16 +58,6 @@ int Producer::send_record(std::string serialized_args) {
 
   assert(table);
   table->insert_row(data, event_time);
-  return 0;
-}
-
-int Producer::begin_transaction() {
-  table = new Table();
-  if (!table) {
-    printf("Failed to allocate space for table!\n");
-    return -1;
-  }
-  streaming = true;
   return 0;
 }
 
