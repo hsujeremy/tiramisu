@@ -28,39 +28,12 @@ void ProducerClient::connect_to_server() {
   printf("Producer connected at socket %d\n", client_socket);
 }
 
-void ProducerClient::close_connection() {
-  if (client_socket < 0) {
-    printf("Invalid client_socket %d\n", client_socket);
-    return;
-  }
-
-  if (state == DISCONNECTED) {
-    printf("Connection already closed!\n");
-    return;
-  }
-
-  if (close(client_socket) < 0) {
-    printf("Failed to close connection\n");
-  }
-  state = DISCONNECTED;
-  printf("Successfully closed connection\n");
-}
-
-int ProducerClient::init_transactions() {
-  if (client_socket < 0 || state == DISCONNECTED) {
-    printf("Client not connected to server\n");
-    return -1;
-  }
-
-  // Assume for now that there this function is not called twice
-  assert(state == UNINITIALIZED);
-
-  // Make a request to the server to set up the transactional_id
-  // The server will either return the transactional_id or -1 on failure
-  Message send_message;
-  std::string request = "init_transactions";
+int ProducerClient::make_request(const std::string request,
+                                 std::string *response) {
   char buf[request.length() + 1];
   strcpy(buf, request.c_str());
+
+  Message send_message;
   send_message.payload = buf;
   send_message.status = UNCATEGORIZED;
   send_message.length = strlen(send_message.payload);
@@ -103,9 +76,43 @@ int ProducerClient::init_transactions() {
   }
 
   payload[nbytes] = '\0';
-  printf("transactional_id from server: %s\n", payload);
-  // TODO: Handle the case where payload cannot be cleanly casted
-  transactional_id = std::stoi(payload);
+  *response = payload;
+  return 0;
+}
+
+void ProducerClient::close_connection() {
+  if (client_socket < 0) {
+    printf("Invalid client_socket %d\n", client_socket);
+    return;
+  }
+
+  if (state == DISCONNECTED) {
+    printf("Connection already closed!\n");
+    return;
+  }
+
+  if (close(client_socket) < 0) {
+    printf("Failed to close connection\n");
+  }
+  state = DISCONNECTED;
+  printf("Successfully closed connection\n");
+}
+
+int ProducerClient::init_transactions() {
+  if (client_socket < 0 || state == DISCONNECTED) {
+    printf("Client not connected to server\n");
+    return -1;
+  }
+
+  // Assume for now that there this function is not called twice
+  assert(state == UNINITIALIZED);
+
+  std::string serialized_txid;
+  make_request("init_transactions", &serialized_txid);
+  printf("transactional_id from server: %s\n", serialized_txid.c_str());
+
+  // TODO: Handle case where `serialized_txid` cannot be cleanly casted to int
+  transactional_id = std::stoi(serialized_txid);
   state = INITIALIZED;
   return transactional_id;
 }
