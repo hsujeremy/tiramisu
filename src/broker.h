@@ -8,7 +8,18 @@
 
 struct Server {
   int server_socket = -1;
+
+  // Server::setup()
+  //   Creates a socket for local communication and sets up a server instance to
+  //   listen on the socket and accept new connections. Sets the `server_socket`
+  //   member on success and returns prematurely otherwise.
   void setup();
+
+  // Server::handle_client(client_socket)
+  //   Handles an incoming client connection on `client_socket` and attempts to
+  //   create a Producer object for that client. The server blocks on the client
+  //   connection processing requests and sending back responses until the
+  //   client closes the connection.
   void handle_client(const int client_socket);
 };
 
@@ -69,9 +80,13 @@ struct BrokerManager {
   Server *server;
   Producer *producers[MAX_PRODUCERS] = {nullptr};
 
+  // BrokerManager::parse_request(request)
+  //   Parses the request message and determines the correct action type.
   RequestedAction parse_request(const char *request);
 
   // BrokerManager::execute(client, action)
+  //   Executes the specified action for the specified client, passing in
+  //   `serialized_args` if necessary.
   int execute(ClientType client, RequestedAction action,
               std::string serialized_args);
 };

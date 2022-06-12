@@ -5,9 +5,9 @@
 #include "common.h"
 
 enum ProducerState {
-  DISCONNECTED,              // Not connected to the server
-  UNINITIALIZED,             // Connected but uninitialized
-  INITIALIZED,               // Connected and initialized
+  DISCONNECTED,                                   // Not connected to the server
+  UNINITIALIZED,                                  // Connected but uninitialized
+  INITIALIZED,                                    // Connected and initialized
 };
 
 struct ProducerClient {
