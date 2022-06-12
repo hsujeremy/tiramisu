@@ -26,6 +26,7 @@ int Producer::begin_transaction() {
     printf("Failed to allocate space for table!\n");
     return -1;
   }
+  streaming = true;
   return 0;
 }
 
