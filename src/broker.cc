@@ -65,21 +65,23 @@ int Producer::send_record(std::string serialized_args) {
   return 0;
 }
 
-int Producer::abort_transaction() {
+int Producer::cleanup_transaction(const bool save) {
   assert(table);
+  if (save) {
+    table->flush_to_disk();
+  }
   streaming = false;
   delete table;
   table = nullptr;
   return 0;
 }
 
+int Producer::abort_transaction() {
+  return cleanup_transaction(false);
+}
+
 int Producer::commit_transaction() {
-  assert(table);
-  table->flush_to_disk();
-  streaming = false;
-  delete table;
-  table = nullptr;
-  return 0;
+  return cleanup_transaction(true);
 }
 
 int BrokerManager::execute(ClientType client, RequestedAction action,

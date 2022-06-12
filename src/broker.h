@@ -57,6 +57,12 @@ struct Producer {
   //   Commits the transaction by writing it out to disk. Frees the table and
   //   sets `streaming` to false.
   int commit_transaction();
+
+private:
+  // Producer::cleanup_transaction(save)
+  //   Frees the relevant table and sets `streaming` to false. If `save` is set
+  //   as true, then this method also writes the table to disk before freeing.
+  int cleanup_transaction(const bool save);
 };
 
 struct BrokerManager {
