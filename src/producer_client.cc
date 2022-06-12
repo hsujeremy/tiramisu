@@ -139,6 +139,12 @@ void ProducerClient::commit_transaction() {
   (void)response_status;
 }
 
+void ProducerClient::abort_transaction() {
+  std::string response_status;
+  make_request("abort_transaction", &response_status);
+  (void)response_status;
+}
+
 void ProducerClient::close_producer() {
   assert(state == INITIALIZED);
   state = UNINITIALIZED;

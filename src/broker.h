@@ -20,6 +20,7 @@ enum RequestedAction {
   INIT_TRANSACTIONS,
   BEGIN_TRANSACTION,
   SEND_RECORD,
+  ABORT_TRANSACTION,
   COMMIT_TRANSACTION,
   UNKNOWN_ACTION,
 };
@@ -47,9 +48,14 @@ struct Producer {
   //   Creates a new row and performs a relational insert into the table.
   int send_record(std::string serialized_args);
 
+  // Producer::abort_transaction()
+  //   Frees the table and sets the `streaming` to false without writing to disk
+  //   beforehand.
+  int abort_transaction();
+
   // Producer::commit_transaction()
   //   Commits the transaction by writing it out to disk. Frees the table and
-  //   sets `streaming` flag to false.
+  //   sets `streaming` to false.
   int commit_transaction();
 };
 

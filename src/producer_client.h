@@ -34,6 +34,8 @@ struct ProducerClient {
 
   void send_record(int data);
 
+  void abort_transaction();
+
   void commit_transaction();
 
   // ProducerClient::close_producer()

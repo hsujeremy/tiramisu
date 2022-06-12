@@ -23,6 +23,8 @@ RequestedAction BrokerManager::parse_request(const char *request) {
     return BEGIN_TRANSACTION;
   } else if (strncmp(request, "send_record", 11) == 0) {
     return SEND_RECORD;
+  } else if (strcmp(request, "abort_transaction") == 0) {
+    return ABORT_TRANSACTION;
   } else if (strcmp(request, "commit_transaction") == 0) {
     return COMMIT_TRANSACTION;
   }
@@ -63,6 +65,14 @@ int Producer::send_record(std::string serialized_args) {
   return 0;
 }
 
+int Producer::abort_transaction() {
+  assert(table);
+  streaming = false;
+  delete table;
+  table = nullptr;
+  return 0;
+}
+
 int Producer::commit_transaction() {
   assert(table);
   table->flush_to_disk();
@@ -96,6 +106,10 @@ int BrokerManager::execute(ClientType client, RequestedAction action,
 
     case SEND_RECORD:
       result = producer->send_record(serialized_args);
+      break;
+
+    case ABORT_TRANSACTION:
+      result = producer->abort_transaction();
       break;
 
     case COMMIT_TRANSACTION:
