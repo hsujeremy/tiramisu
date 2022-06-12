@@ -5,6 +5,12 @@
 
 #define MAX_PRODUCERS 1
 
+struct Server {
+  int server_socket = -1;
+  void setup();
+  void handle_client(const int client_socket);
+};
+
 enum ClientType {
   PRODUCER,
 };
@@ -12,13 +18,6 @@ enum ClientType {
 enum RequestedAction {
   INIT_TRANSACTIONS,
   UNKNOWN_ACTION,
-};
-
-struct Server {
-  int server_socket = -1;
-
-  void setup();
-  void handle_client(const int client_socket);
 };
 
 struct Producer {
