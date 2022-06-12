@@ -18,12 +18,13 @@ void Table::insert_row(int data, std::time_t event_time) {
 }
 
 void Table::flush_to_disk() {
+  std::string dirname = "./data";
   struct stat st;
-  if (stat("./data", &st) == -1) {
-    mkdir("./data", (mode_t)0777);
+  if (stat(dirname.c_str(), &st) == -1) {
+    mkdir(dirname.c_str(), (mode_t)0777);
   }
 
-  std::ofstream file("./data/output.csv");
+  std::ofstream file(dirname + "/output.csv");
   for (size_t i = 0; i < rows.size(); ++i) {
     file << rows[i].serialize();
   }
