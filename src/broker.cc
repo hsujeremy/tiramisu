@@ -67,6 +67,8 @@ int Producer::commit_transaction() {
   assert(table);
   table->flush_to_disk();
   streaming = false;
+  delete table;
+  table = nullptr;
   return 0;
 }
 
