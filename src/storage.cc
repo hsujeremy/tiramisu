@@ -4,6 +4,11 @@
 #include <iostream>
 #include "storage.h"
 
+std::string Row::serialize() {
+  return std::to_string(data) + "," + std::to_string(event_time) + ","
+         + std::to_string(processing_time);
+}
+
 void Table::insert_row(int data, std::time_t event_time) {
   Row row;
   row.data = data;
@@ -20,10 +25,7 @@ void Table::flush_to_disk() {
 
   std::ofstream file("./data/output.csv");
   for (size_t i = 0; i < rows.size(); ++i) {
-    std::string serialized_row = std::to_string(rows[i].data) + ","
-                                 + std::to_string(rows[i].event_time) + ","
-                                 + std::to_string(rows[i].processing_time) + ",";
-    file << serialized_row;
+    file << rows[i].serialize();
   }
   file.close();
 }
