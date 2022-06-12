@@ -38,13 +38,13 @@ struct Producer {
   //   Return the transactional ID.
   int init_transactions();
 
-  // Producer::send_record()
-  //   Creates a new row and performs a relational insert into the table.
-  int send_record(std::string serialized_args);
-
   // Producer::begin_transaction()
   //   Creates a new record table. Returns 0 on success and -1 otherwise.
   int begin_transaction();
+
+  // Producer::send_record()
+  //   Creates a new row and performs a relational insert into the table.
+  int send_record(std::string serialized_args);
 };
 
 struct BrokerManager {
