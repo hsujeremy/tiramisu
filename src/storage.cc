@@ -18,7 +18,7 @@ void Table::insert_row(int data, std::time_t event_time) {
 }
 
 void Table::flush_to_disk() {
-  std::string dirname = "./data";
+  const std::string dirname = "./data";
   struct stat st;
   if (stat(dirname.c_str(), &st) == -1) {
     mkdir(dirname.c_str(), (mode_t)0777);
