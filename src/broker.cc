@@ -6,6 +6,12 @@ Producer::Producer(int client_socket, int id) {
   transactional_id = id;
 }
 
+Producer::~Producer() {
+  if (table) {
+    delete table;
+  }
+}
+
 RequestedAction BrokerManager::parse_request(const char *request) {
   // Parse the string and return the request
   if (strcmp(request, "init_transactions") == 0) {

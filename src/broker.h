@@ -31,6 +31,7 @@ struct Producer {
   bool streaming = false;
 
   Producer(int client_socket, int id);
+  ~Producer();
 
   // Producer::init_transactions()
   //   Return the transactional ID.
