@@ -28,6 +28,7 @@ struct Producer {
   // connection (for now)
   int transactional_id;
   Table *table = nullptr;
+  bool streaming = false;
 
   Producer(int client_socket, int id);
 
