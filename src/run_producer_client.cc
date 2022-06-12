@@ -8,8 +8,6 @@
 #include "common.h"
 #include "producer_client.h"
 
-#define STDIN_BUFSIZE 1024
-
 int main() {
   // Tbh we can just make the transactions here for now
   ProducerClient *prod = new ProducerClient;
