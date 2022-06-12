@@ -27,6 +27,9 @@ struct Producer {
   int transactional_id;
 
   Producer(int client_socket, int id);
+
+  // Producer::init_transactions()
+  //   Return the transactional ID.
   int init_transactions();
 };
 
