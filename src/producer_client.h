@@ -1,6 +1,7 @@
 #ifndef PRODUCER_H
 #define PRODUCER_H
 
+#include <string>
 #include "common.h"
 
 enum ProducerState {
