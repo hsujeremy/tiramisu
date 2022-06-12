@@ -16,7 +16,7 @@ RequestedAction BrokerManager::parse_request(const char *request) {
   // Parse the string and return the request
   if (strcmp(request, "init_transactions") == 0) {
     return INIT_TRANSACTIONS;
-  } if (strcmp(request, "begin_transaction") == 0) {
+  } else if (strcmp(request, "begin_transaction") == 0) {
     return BEGIN_TRANSACTION;
   }
   return UNKNOWN_ACTION;
