@@ -2,6 +2,7 @@
 #define BROKER_H
 
 #include <iostream>
+#include "storage.h"
 
 #define MAX_PRODUCERS 1
 
@@ -25,6 +26,7 @@ struct Producer {
   // Every producer has a single transactional ID during the lifetime of its
   // connection (for now)
   int transactional_id;
+  Table *table = nullptr;
 
   Producer(int client_socket, int id);
 
