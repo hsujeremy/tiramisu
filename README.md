@@ -3,5 +3,5 @@
 Tiramisu is a lightweight event streaming platform designed for producers to
 easily stream events across a network.
 
-Why the name Tiramisu? It's a cool sounding name and one of my favorite
-desserts. Plus it also rhymes with my name!
+Why is this system called Tiramisu? I guess it sounds cool and is one of my
+favorite desserts. And it also rhymes with my name!
