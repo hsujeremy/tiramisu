@@ -9,7 +9,7 @@ std::string Row::serialize() {
          + std::to_string(processing_time);
 }
 
-void Table::insert_row(int data, std::time_t event_time) {
+void Table::insert_row(const int data, const std::time_t event_time) {
   Row row;
   row.data = data;
   row.event_time = event_time;

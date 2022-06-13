@@ -124,7 +124,7 @@ void ProducerClient::begin_transaction() {
   (void)response_status;
 }
 
-void ProducerClient::send_record(int data) {
+void ProducerClient::send_record(const int data) {
   std::string response_status;
   std::time_t event_time = std::time(nullptr);
   std::string request =

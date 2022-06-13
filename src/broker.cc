@@ -4,7 +4,7 @@
 #include <vector>
 #include "broker.h"
 
-Producer::Producer(int client_socket, int id) {
+Producer::Producer(const int client_socket, const int id) {
   socket = client_socket;
   transactional_id = id;
 }

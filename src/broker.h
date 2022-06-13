@@ -44,7 +44,7 @@ struct Producer {
   Table *table = nullptr;
   bool streaming = false;
 
-  Producer(int client_socket, int id);
+  Producer(const int client_socket, const int id);
   ~Producer();
 
   // Producer::init_transactions()

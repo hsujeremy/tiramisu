@@ -32,7 +32,7 @@ struct ProducerClient {
 
   void begin_transaction();
 
-  void send_record(int data);
+  void send_record(const int data);
 
   void abort_transaction();
 
