@@ -6,7 +6,9 @@ easily stream records.
 Why is this system called Tiramisu? I guess it sounds cool and is one of my
 favorite desserts. And it also rhymes with my name!
 
-## Docker Setup
+## Running the Code
+
+### Docker Setup
 
 Tiramisu is written in C++14 in a Linux environment. The following `make`
 commands can help you easily setup the Docker environment all required/helpful
@@ -22,7 +24,7 @@ $ # Stop the container
 $ make stopcontainer
 ```
 
-## Running Tiramisu
+### Compiling and Running the Server/Producer Programs
 
 You can compile everything by running `make all`. First start the server in one
 shell with `./server`. You can then run the provided producer client test
