@@ -15,17 +15,17 @@ Producer::~Producer() {
   }
 }
 
-RequestedAction BrokerManager::parse_request(const char *request) {
+RequestedAction BrokerManager::parse_request(const std::string request) {
   // Parse the string and return the request
-  if (strcmp(request, "init_transactions") == 0) {
+  if (request.compare("init_transactions") == 0) {
     return INIT_TRANSACTIONS;
-  } else if (strcmp(request, "begin_transaction") == 0) {
+  } else if (request.compare("begin_transaction") == 0) {
     return BEGIN_TRANSACTION;
-  } else if (strncmp(request, "send_record", 11) == 0) {
+  } else if (request.compare(0, 11, "send_record") == 0) {
     return SEND_RECORD;
-  } else if (strcmp(request, "abort_transaction") == 0) {
+  } else if (request.compare("abort_transaction") == 0) {
     return ABORT_TRANSACTION;
-  } else if (strcmp(request, "commit_transaction") == 0) {
+  } else if (request.compare("commit_transaction") == 0) {
     return COMMIT_TRANSACTION;
   }
   return UNKNOWN_ACTION;

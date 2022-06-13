@@ -82,7 +82,7 @@ struct BrokerManager {
 
   // BrokerManager::parse_request(request)
   //   Parses the request message and determines the correct action type.
-  RequestedAction parse_request(const char *request);
+  RequestedAction parse_request(const std::string request);
 
   // BrokerManager::execute(client, action)
   //   Executes the specified action for the specified client, passing in
