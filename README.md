@@ -6,7 +6,7 @@ easily stream records.
 Why is this system called Tiramisu? I guess it sounds cool and is one of my
 favorite desserts. And it also rhymes with my name!
 
-## Running the Code
+## How to Run
 
 ### Docker Setup
 
