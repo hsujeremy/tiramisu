@@ -32,8 +32,8 @@ struct ProducerClient {
 
   // ProducerClient::init_transactions()
   //   Gets the transactional ID for this producer back from the server and
-  //   sets the state of the producer client accordingly. Returns the
-  //   transactional ID on success and -1 otherwise.
+  //   sets the state of the producer client accordingly.
+  //   Returns the transactional ID on success and -1 otherwise.
   int init_transactions();
 
   // ProducerClient::begin_transaction()

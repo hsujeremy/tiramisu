@@ -81,12 +81,13 @@ struct BrokerManager {
   Producer* producers[MAX_PRODUCERS] = {nullptr};
 
   // BrokerManager::parse_request(request)
-  //   Parses the request message and determines the correct action type.
+  //   Parses the request message and returns the correct action type.
   RequestedAction parse_request(const std::string request);
 
   // BrokerManager::execute(client, action)
   //   Executes the specified action for the specified client, passing in
   //   `serialized_args` if necessary.
+  //   Returns a nonnegative integer on success and -1 otherwise.
   int execute(ClientType client, RequestedAction action,
               std::string serialized_args);
 };
