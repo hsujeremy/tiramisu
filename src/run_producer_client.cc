@@ -18,7 +18,9 @@ int main() {
 
   prod->init_transactions();
   prod->begin_transaction();
-  prod->send_record(1);
+  for (size_t i = 0; i < 10; ++i) {
+    prod->send_record(i);
+  }
   prod->commit_transaction();
   prod->close_producer();
   prod->close_connection();
