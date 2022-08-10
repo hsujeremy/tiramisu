@@ -6,7 +6,7 @@
 #include "broker.h"
 #include "common.h"
 
-BrokerManager *broker = nullptr;
+BrokerManager* broker = nullptr;
 
 void Server::setup() {
   if (!broker) {
@@ -29,7 +29,7 @@ void Server::setup() {
   unlink(local.sun_path);
 
   len = strlen(local.sun_path) + sizeof(local.sun_family) + 1;
-  if (bind(server_socket, (sockaddr *)&local, len) == -1) {
+  if (bind(server_socket, (sockaddr*)&local, len) == -1) {
     printf("Socket failed to bind\n");
     return;
   }
@@ -120,7 +120,7 @@ void Server::handle_client(const int client_socket) {
 
 int main() {
   broker = new BrokerManager();
-  Server *server = new Server();
+  Server* server = new Server();
   broker->server = server;
   server->setup();
   if (server->server_socket < 0) {
@@ -131,7 +131,7 @@ int main() {
 
   sockaddr_un remote;
   socklen_t len = sizeof(remote);
-  int client_socket = accept(server->server_socket, (sockaddr *)&remote, &len);
+  int client_socket = accept(server->server_socket, (sockaddr*)&remote, &len);
   if (client_socket == -1) {
     printf("Failed to accept a new connection\n");
     exit(1);

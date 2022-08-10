@@ -90,7 +90,7 @@ int BrokerManager::execute(ClientType client, RequestedAction action,
   // implemented
   (void)client;
 
-  Producer *producer;
+  Producer* producer;
   // Trivial for now since there is at most one producer but good futureproofing
   for (int i = 0; i < MAX_PRODUCERS; ++i) {
     producer = producers[i];

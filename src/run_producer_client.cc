@@ -10,7 +10,7 @@
 
 int main() {
   // Tbh we can just make the transactions here for now
-  ProducerClient *prod = new ProducerClient;
+  ProducerClient* prod = new ProducerClient;
   prod->connect_to_server();
   if (prod->client_socket < 0) {
     exit(1);

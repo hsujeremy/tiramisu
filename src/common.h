@@ -13,7 +13,7 @@ enum Status {
 struct Message {
   Status status;
   unsigned length;
-  char *payload;
+  char* payload;
 };
 
 #endif

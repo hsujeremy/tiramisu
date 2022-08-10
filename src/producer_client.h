@@ -24,7 +24,7 @@ struct ProducerClient {
   // ProducerClient::make_request(request, response)
   //   Make request to server and save server output in `response`. Return 0 on
   //   success and -1 otherwise.
-  int make_request(const std::string request, std::string *response);
+  int make_request(const std::string request, std::string* response);
 
   // ProducerClient::close_connection()
   //   Closes the connection the server.

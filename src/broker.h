@@ -41,7 +41,7 @@ struct Producer {
   // Every producer has a single transactional ID during the lifetime of its
   // connection (for now)
   int transactional_id;
-  Table *table = nullptr;
+  Table* table = nullptr;
   bool streaming = false;
 
   Producer(const int client_socket, const int id);
@@ -77,8 +77,8 @@ private:
 };
 
 struct BrokerManager {
-  Server *server;
-  Producer *producers[MAX_PRODUCERS] = {nullptr};
+  Server* server;
+  Producer* producers[MAX_PRODUCERS] = {nullptr};
 
   // BrokerManager::parse_request(request)
   //   Parses the request message and determines the correct action type.

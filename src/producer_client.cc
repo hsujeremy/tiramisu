@@ -20,7 +20,7 @@ void ProducerClient::connect_to_server() {
   remote.sun_family = AF_UNIX;
   strncpy(remote.sun_path, SOCK_PATH, strlen(SOCK_PATH) + 1);
   len = strlen(remote.sun_path) + sizeof(remote.sun_family) + 1;
-  if (connect(client_socket, (sockaddr *)&remote, len) == -1) {
+  if (connect(client_socket, (sockaddr*)&remote, len) == -1) {
     printf("Connection failed\n");
     return;
   }
@@ -30,7 +30,7 @@ void ProducerClient::connect_to_server() {
 }
 
 int ProducerClient::make_request(const std::string request,
-                                 std::string *response) {
+                                 std::string* response) {
   char buf[request.length() + 1];
   strcpy(buf, request.c_str());
 
