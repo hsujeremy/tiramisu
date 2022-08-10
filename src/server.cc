@@ -99,15 +99,15 @@ void Server::handle_client(const int client_socket) {
       // Send status of the received message (OK, UNKNOWN_QUERY, etc)
       int r = send(client_socket, &send_message, sizeof(Message), 0);
       if (r == -1) {
-          printf("Failed to send message.");
-          exit(1);
+        printf("Failed to send message.");
+        exit(1);
       }
 
       // Send response to the request
       r = send(client_socket, send_message.payload, send_message.length, 0);
       if (r == -1) {
-          printf("Failed to send message.");
-          exit(1);
+        printf("Failed to send message.");
+        exit(1);
       }
     }
   }
