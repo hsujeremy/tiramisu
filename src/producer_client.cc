@@ -29,8 +29,7 @@ void ProducerClient::connect_to_server() {
   printf("Producer connected at socket %d\n", client_socket);
 }
 
-int ProducerClient::make_request(const std::string request,
-                                 std::string* response) {
+int ProducerClient::make_request(const std::string request) {
   char buf[request.length() + 1];
   strcpy(buf, request.c_str());
 
@@ -77,8 +76,17 @@ int ProducerClient::make_request(const std::string request,
   }
 
   payload[nbytes] = '\0';
-  *response = payload;
-  return 0;
+  std::string serialized_response = payload;
+
+  int status;
+  try {
+    status = std::stoi(serialized_response);
+  } catch (const std::invalid_argument& ia) {
+    printf("Unable to cast string \"%s\" to int\n",
+           serialized_response.c_str());
+    return -2;
+  }
+  return status;
 }
 
 void ProducerClient::close_connection() {
@@ -108,44 +116,37 @@ int ProducerClient::init_transactions() {
   // Assume for now that there this function is not called twice
   assert(state == UNINITIALIZED);
 
-  std::string serialized_txid;
-  make_request("init_transactions", &serialized_txid);
-  printf("transactional_id from server: %s\n", serialized_txid.c_str());
-
-  // TODO: Handle case where `serialized_txid` cannot be cleanly casted to int
-  transactional_id = std::stoi(serialized_txid);
+  transactional_id = make_request("init_transactions");
+  if (transactional_id < 0) {
+    printf("Error getting the transactional ID!\n");
+    return -1;
+  }
+  printf("transactional_id from server: %d\n", transactional_id);
   state = INITIALIZED;
   return transactional_id;
 }
 
-void ProducerClient::begin_transaction() {
-  std::string response_status;
-  make_request("begin_transaction", &response_status);
-  (void)response_status;
+int ProducerClient::begin_transaction() {
+  return make_request("begin_transaction");
 }
 
-void ProducerClient::send_record(const int data) {
-  std::string response_status;
+int ProducerClient::send_record(const int data) {
   std::time_t event_time = std::time(nullptr);
   std::string request =
     "send_record," + std::to_string(data) + "," + std::to_string(event_time);
-  make_request(request, &response_status);
-  (void)response_status;
+  return make_request(request);
 }
 
-void ProducerClient::commit_transaction() {
-  std::string response_status;
-  make_request("commit_transaction", &response_status);
-  (void)response_status;
+int ProducerClient::commit_transaction() {
+  return make_request("commit_transaction");
 }
 
-void ProducerClient::abort_transaction() {
-  std::string response_status;
-  make_request("abort_transaction", &response_status);
-  (void)response_status;
+int ProducerClient::abort_transaction() {
+  return make_request("abort_transaction");
 }
 
-void ProducerClient::close_producer() {
+int ProducerClient::close_producer() {
   assert(state == INITIALIZED);
   state = UNINITIALIZED;
+  return 0;
 }

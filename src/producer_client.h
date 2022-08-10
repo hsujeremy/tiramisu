@@ -22,9 +22,9 @@ struct ProducerClient {
   void connect_to_server();
 
   // ProducerClient::make_request(request, response)
-  //   Make request to server and save server output in `response`. Return 0 on
-  //   success and -1 otherwise.
-  int make_request(const std::string request, std::string* response);
+  //   Makes request to server.
+  //   Returns a nonnegative integer on success and -1 otherwise.
+  int make_request(const std::string request);
 
   // ProducerClient::close_connection()
   //   Closes the connection the server.
@@ -39,26 +39,31 @@ struct ProducerClient {
   // ProducerClient::begin_transaction()
   //   Marks the beginning of a transaction and thus should be called before the
   //   start of any new transaction.
-  void begin_transaction();
+  //   Returns 0 on success, -1 on server error, and -2 on client error.
+  int begin_transaction();
 
   // ProducerClient::send_record(data)
   //   Sends a record to the server as part of a transaction. Must be called
   //   in between calls to begin_transaction and either commit_transaction() or
   //   abort_transaction().
-  void send_record(const int data);
+  //   Returns 0 on success, -1 on server error, and -2 on client error.
+  int send_record(const int data);
 
   // ProducerClient::abort_transaction()
   //   Aborts the ongoing transaction and any unflushed produce messages.
-  void abort_transaction();
+  //   Returns 0 on success, -1 on server error, and -2 on client error.
+  int abort_transaction();
 
   // ProducerClient::commit_transaction()
   //   Commits the ongoing transaction and writes it to disk on the server.
-  void commit_transaction();
+  //   Returns 0 on success, -1 on server error, and -2 on client error.
+  int commit_transaction();
 
   // ProducerClient::close_producer()
   //   Changes the state back to UNINITIALIZED. Must call `init_transactions()`
   //   again before making any further transactions.
-  void close_producer();
+  //   Returns 0 on success, -1 on server error, and -2 on client error.
+  int close_producer();
 };
 
 #endif
