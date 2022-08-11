@@ -21,6 +21,7 @@ int main() {
   for (size_t i = 0; i < 10; ++i) {
     prod->send_record(i);
   }
+  prod->commit_transaction();
   prod->close_producer();
 
   // TODO: Do we also need to close the socket?

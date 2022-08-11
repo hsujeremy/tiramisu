@@ -26,7 +26,7 @@ void Table::flush_to_disk() {
 
   std::ofstream file(dirname + "/output.csv");
   for (size_t i = 0; i < rows.size(); ++i) {
-    file << rows[i].serialize();
+    file << rows[i].serialize() << '\n';
   }
   file.close();
 }
