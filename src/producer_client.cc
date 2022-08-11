@@ -36,6 +36,12 @@ int ProducerClient::connect_to_server() {
       return -1;
     }
 
+    char buf[1024] = {0};
+    ssize_t nread = read(client_socket, buf, 1024);
+    if (nread) {
+      printf("From server: %s\n", buf);
+    }
+
     state = UNINITIALIZED;
     printf("Producer connected at socket %d\n", client_socket);
     return 0;

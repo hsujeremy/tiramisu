@@ -168,7 +168,7 @@ int main() {
   fd_set readfds;
 
   // Some message
-  std::string message = "ECHO Daemon v1.0\r\n";
+  std::string message = "ECHO Daemon v1.0\r";
 
   int master_socket = socket(AF_INET, SOCK_STREAM, 0);
   if (master_socket == 0) {
@@ -271,7 +271,7 @@ int main() {
           if (!nread) {
             getpeername(sd, (struct sockaddr*)&addr, (socklen_t*)&addrlen);
             printf("Host disconnected with IP %s and port %d\n",
-                  inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+                   inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
             close(sd);
             client_sockets[i] = 0;
           } else {
