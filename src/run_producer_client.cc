@@ -35,8 +35,7 @@ int main() {
     return -1;
   }
 
-  prod->make_request("init_transactions");
-  prod->make_request("init_transactions");
+  prod->init_transactions();
 
   close(prod->client_fd);
   return 0;

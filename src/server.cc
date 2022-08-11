@@ -228,7 +228,7 @@ int main() {
       perror("select error\n");
     }
 
-    // Handle new connection
+    // Either handle a new connection or some IO operation on an existing one
     if (FD_ISSET(master_socket, &readfds)) {
       new_socket = accept(master_socket, (struct sockaddr*)&addr,
                           (socklen_t*)&addrlen);
@@ -262,30 +262,30 @@ int main() {
           break;
         }
       }
-    }
+    } else {
+      // Handle IO operation on some other socket
+      for (size_t i = 0; i < MAX_CLIENTS; ++i) {
+        sd = client_sockets[i];
+        if (FD_ISSET(sd, &readfds)) {
+          ssize_t nread = read(sd, buf, 1024);
+          if (!nread) {
+            getpeername(sd, (struct sockaddr*)&addr, (socklen_t*)&addrlen);
+            printf("Host disconnected with IP %s and port %d\n",
+                  inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+            close(sd);
+            client_sockets[i] = 0;
+          } else {
+            // Echo back the incoming message
+            buf[nread] = '\0';
+            printf("From client: %s\n", buf);
+            std::string request(buf);
+            RequestedAction action = broker->parse_request(request);
 
-    // Then handle IO operation on some other socket
-    for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-      sd = client_sockets[i];
-      if (FD_ISSET(sd, &readfds)) {
-        ssize_t nread = read(sd, buf, 1024);
-        if (!nread) {
-          getpeername(sd, (struct sockaddr*)&addr, (socklen_t*)&addrlen);
-          printf("Host disconnected with IP %s and port %d\n",
-                 inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
-          close(sd);
-          client_sockets[i] = 0;
-        } else {
-          // Echo back the incoming message
-          buf[nread] = '\0';
-          printf("From client: %s\n", buf);
-          std::string request(buf);
-          RequestedAction action = broker->parse_request(request);
+            int result = broker->execute(PRODUCER, action, request);
+            std::string ser_result = std::to_string(result);
 
-          int result = broker->execute(PRODUCER, action, request);
-          std::string ser_result = std::to_string(result);
-
-          send(sd, ser_result.c_str(), strlen(ser_result.c_str()), 0);
+            send(sd, ser_result.c_str(), strlen(ser_result.c_str()), 0);
+          }
         }
       }
     }
