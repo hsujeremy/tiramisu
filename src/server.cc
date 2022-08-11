@@ -251,7 +251,7 @@ int main() {
         }
       }
 
-      r = send(new_socket, message.c_str(), strlen(message.c_str()), 0);
+      r = send(new_socket, message.c_str(), message.length(), 0);
       if (r < 0) {
         perror("Error sending connection message\n");
       }

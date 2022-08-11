@@ -38,7 +38,7 @@ int main() {
   char buf[1024] = {0};
   std::string message = "init_transactions";
 
-  send(prod->client_socket, message.c_str(), strlen(message.c_str()), 0);
+  send(prod->client_socket, message.c_str(), message.length(), 0);
   ssize_t valread = read(prod->client_socket, buf, 1024);
   printf("From server: %s\n", buf);
 
