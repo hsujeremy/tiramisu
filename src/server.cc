@@ -241,6 +241,16 @@ int main() {
       printf("New connection with socket fd %d, IP %s, and port number %d\n",
              new_socket, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
+      // Create Producer by default for now
+      int prod_idx = -1;
+      for (int i = 0; i < MAX_PRODUCERS; ++i) {
+        if (!broker->producers[i]) {
+          prod_idx = i;
+          // Set index in table to be the transactional_id for that producer
+          broker->producers[i] = new Producer(new_socket, prod_idx);
+        }
+      }
+
       r = send(new_socket, message.c_str(), strlen(message.c_str()), 0);
       if (r < 0) {
         perror("Error sending connection message\n");
@@ -270,7 +280,13 @@ int main() {
           // Echo back the incoming message
           buf[valread] = '\0';
           printf("From client: %s\n", buf);
-          send(sd, buf, strlen(buf), 0);
+          std::string request(buf);
+          RequestedAction action = broker->parse_request(request);
+
+          int result = broker->execute(PRODUCER, action, request);
+          std::string ser_result = std::to_string(result);
+
+          send(sd, ser_result.c_str(), strlen(ser_result.c_str()), 0);
         }
       }
     }

@@ -34,7 +34,7 @@ int main() {
 
   struct sockaddr_in server_addr;
   char buf[1024] = {0};
-  std::string message = "Hello from client!";
+  std::string message = "init_transactions";
 
   int sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
@@ -45,7 +45,7 @@ int main() {
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(PORT);
 
-  // Convert IPv4 and IPv6 address from texxt to binary
+  // Convert IPv4 and IPv6 address from text to binary
   int r = inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
   if (r <= 0) {
     perror("Invalid address! Address not supported\n");
