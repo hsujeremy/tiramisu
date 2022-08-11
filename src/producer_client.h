@@ -13,7 +13,6 @@ enum ProducerState {
 
 struct ProducerClient {
   int client_socket;
-  int client_fd;
   int transactional_id;
   ProducerState state = DISCONNECTED;
 

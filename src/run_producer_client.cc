@@ -25,9 +25,8 @@ int main() {
   prod->close_producer();
 
   // TODO: Do we also need to close the socket?
-  close(prod->client_fd);
+  close(prod->client_socket);
 
   delete prod;
   return 0;
-
 }

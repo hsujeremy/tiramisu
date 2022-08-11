@@ -29,9 +29,8 @@ int ProducerClient::connect_to_server() {
     return -1;
   }
 
-  client_fd = connect(client_socket, (struct sockaddr*)&server_addr,
-                      sizeof(struct sockaddr));
-  if (client_fd < 0) {
+  r = connect(client_socket, (struct sockaddr*)&server_addr, sizeof(struct sockaddr));
+  if (r < 0) {
     perror("Connection failed\n");
     return -1;
   }
