@@ -39,7 +39,7 @@ int main() {
   std::string message = "init_transactions";
 
   send(prod->client_socket, message.c_str(), message.length(), 0);
-  ssize_t valread = read(prod->client_socket, buf, 1024);
+  read(prod->client_socket, buf, 1024);
   printf("From server: %s\n", buf);
 
   close(prod->client_fd);
