@@ -42,60 +42,30 @@ int ProducerClient::connect_to_server() {
 }
 
 int ProducerClient::make_request(const std::string request) {
-  char buf[request.length() + 1];
-  strcpy(buf, request.c_str());
+  // TODO: Check server connection beforehand
+  char buf[1024] = {0};
 
-  Message send_message;
-  send_message.payload = buf;
-  send_message.status = UNCATEGORIZED;
-  send_message.length = strlen(send_message.payload);
-
-  // First sent header to the server
-  int r = send(client_socket, &send_message, sizeof(Message), 0);
-  if (r == -1) {
-    printf("Failed to send message header\n");
+  int r = send(client_socket, request.c_str(), request.length(), 0);
+  if (r < 0) {
+    perror("Error sending to server\n");
     return -1;
   }
 
-  // If header is sent successfully, then send the payload
-  r = send(client_socket, send_message.payload, send_message.length, 0);
-  if (r == -1) {
-    printf("Failed to send message payload\n");
+  ssize_t nread = read(client_socket, buf, 1024);
+  if (!nread) {
+    perror("Server connection error\n");
     return -1;
   }
 
-  Message recv_message;
-  ssize_t len = recv(client_socket, &recv_message, sizeof(Message), 0);
-  if (len == 0) {
-    printf("Server closed connection\n");
-    return -1;
-  } else if (len < 0) {
-    printf("Error setting the transactional ID on the server\n");
-    return -1;
-  }
-
-  if (recv_message.status != OK_DONE || recv_message.length == 0) {
-    printf("Server connection error\n");
-    return -1;
-  }
-
-  unsigned nbytes = recv_message.length;
-  char payload[nbytes + 1];
-  len = recv(client_socket, payload, nbytes, 0);
-  if (!len) {
-    printf("Server connection error\n");
-    return -1;
-  }
-
-  payload[nbytes] = '\0';
-  std::string serialized_response = payload;
+  buf[nread] = '\0';
+  std::string response(buf);
+  printf("From server: %s\n", response.c_str());
 
   int status;
   try {
-    status = std::stoi(serialized_response);
+    status = std::stoi(response);
   } catch (const std::invalid_argument& ia) {
-    printf("Unable to cast string \"%s\" to int\n",
-           serialized_response.c_str());
+    printf("Unable to cast string \"%s\" to int\n", response.c_str());
     return -2;
   }
   return status;

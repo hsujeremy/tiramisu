@@ -35,12 +35,8 @@ int main() {
     return -1;
   }
 
-  char buf[1024] = {0};
-  std::string message = "init_transactions";
-
-  send(prod->client_socket, message.c_str(), message.length(), 0);
-  read(prod->client_socket, buf, 1024);
-  printf("From server: %s\n", buf);
+  prod->make_request("init_transactions");
+  prod->make_request("init_transactions");
 
   close(prod->client_fd);
   return 0;
