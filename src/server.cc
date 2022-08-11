@@ -39,7 +39,8 @@ void Server::setup() {
   }
 }
 
-void Server::handle_client(const int client_socket) {
+void Server::handle_client(const int client_socket,
+                           const ClientType client_type) {
   if (!broker) {
     printf("BrokerManager not initialized!\n");
     return;
@@ -137,7 +138,7 @@ int main() {
     exit(1);
   }
 
-  server->handle_client(client_socket);
+  server->handle_client(client_socket, PRODUCER);
   delete server;
   delete broker;
   return 0;

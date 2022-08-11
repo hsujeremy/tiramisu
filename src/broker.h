@@ -6,6 +6,11 @@
 
 #define MAX_PRODUCERS 1
 
+enum ClientType {
+  PRODUCER,
+  CONSUMER,
+};
+
 struct Server {
   int server_socket = -1;
 
@@ -15,16 +20,13 @@ struct Server {
   //   member on success and returns prematurely otherwise.
   void setup();
 
-  // Server::handle_client(client_socket)
+  // Server::handle_client(client_socket, client_type)
   //   Handles an incoming client connection on `client_socket` and attempts to
-  //   create a Producer object for that client. The server blocks on the client
-  //   connection processing requests and sending back responses until the
+  //   create a Producer or Consumer object for that client, depending on the
+  //   `client_type`. The server blocks on the client connection processing
+  //   requests and sending back responses until the
   //   client closes the connection.
-  void handle_client(const int client_socket);
-};
-
-enum ClientType {
-  PRODUCER,
+  void handle_client(const int client_socket, const ClientType client_type);
 };
 
 enum RequestedAction {
