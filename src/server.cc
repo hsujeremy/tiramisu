@@ -158,7 +158,6 @@ int main() {
   int new_socket;
   int client_sockets[MAX_CLIENTS] = {0};
   int activity;
-  int valread;
   int sd;
   int max_sd;
 
@@ -269,8 +268,8 @@ int main() {
     for (size_t i = 0; i < MAX_CLIENTS; ++i) {
       sd = client_sockets[i];
       if (FD_ISSET(sd, &readfds)) {
-        valread = read(sd, buf, 1024);
-        if (!valread) {
+        ssize_t nread = read(sd, buf, 1024);
+        if (!nread) {
           getpeername(sd, (struct sockaddr*)&addr, (socklen_t*)&addrlen);
           printf("Host disconnected with IP %s and port %d\n",
                  inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
@@ -278,7 +277,7 @@ int main() {
           client_sockets[i] = 0;
         } else {
           // Echo back the incoming message
-          buf[valread] = '\0';
+          buf[nread] = '\0';
           printf("From client: %s\n", buf);
           std::string request(buf);
           RequestedAction action = broker->parse_request(request);
