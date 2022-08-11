@@ -10,41 +10,41 @@
 #include <arpa/inet.h>
 
 int ProducerClient::connect_to_server() {
-    printf("Attemping to connect to server at port %d\n", PORT);
-    struct sockaddr_in server_addr;
+  printf("Attemping to connect to server at port %d\n", PORT);
+  struct sockaddr_in server_addr;
 
-    client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (client_socket < 0) {
-      perror("Error creating socket\n");
-      return -1;
-    }
+  client_socket = socket(AF_INET, SOCK_STREAM, 0);
+  if (client_socket < 0) {
+    perror("Error creating socket\n");
+    return -1;
+  }
 
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
+  server_addr.sin_family = AF_INET;
+  server_addr.sin_port = htons(PORT);
 
-    // Convert IPv4 and IPv6 address from text to binary
-    int r = inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
-    if (r <= 0) {
-      perror("Invalid address! Address not supported\n");
-      return -1;
-    }
+  // Convert IPv4 and IPv6 address from text to binary
+  int r = inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
+  if (r <= 0) {
+    perror("Invalid address! Address not supported\n");
+    return -1;
+  }
 
-    client_fd = connect(client_socket, (struct sockaddr*)&server_addr,
-                        sizeof(struct sockaddr));
-    if (client_fd < 0) {
-      perror("Connection failed\n");
-      return -1;
-    }
+  client_fd = connect(client_socket, (struct sockaddr*)&server_addr,
+                      sizeof(struct sockaddr));
+  if (client_fd < 0) {
+    perror("Connection failed\n");
+    return -1;
+  }
 
-    char buf[1024] = {0};
-    ssize_t nread = read(client_socket, buf, 1024);
-    if (nread) {
-      printf("From server: %s\n", buf);
-    }
+  char buf[1024] = {0};
+  ssize_t nread = read(client_socket, buf, 1024);
+  if (nread) {
+    printf("From server: %s\n", buf);
+  }
 
-    state = UNINITIALIZED;
-    printf("Producer connected at socket %d\n", client_socket);
-    return 0;
+  state = UNINITIALIZED;
+  printf("Producer connected at socket %d\n", client_socket);
+  return 0;
 }
 
 int ProducerClient::make_request(const std::string request) {
