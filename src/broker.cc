@@ -16,6 +16,7 @@ Producer::~Producer() {
 }
 
 RequestedAction BrokerManager::parse_request(const std::string request) {
+  printf("client request: %s\n", request.c_str());
   // Parse the string and return the request
   if (request.compare("init_transactions") == 0) {
     return INIT_TRANSACTIONS;
@@ -122,6 +123,6 @@ int BrokerManager::execute(ClientType client, RequestedAction action,
       result = 0;
       break;
   }
-  printf("result %d\n", result);
+  printf("result from server: %d\n", result);
   return result;
 }
