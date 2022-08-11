@@ -4,6 +4,7 @@
 #include <string>
 #include "common.h"
 
+#define PORT 8888
 enum ProducerState {
   DISCONNECTED,       // Not connected to the server
   UNINITIALIZED,      // Connected but uninitialized
@@ -12,14 +13,15 @@ enum ProducerState {
 
 struct ProducerClient {
   int client_socket;
+  int client_fd;
   int transactional_id;
   ProducerState state = DISCONNECTED;
 
   // ProducerClient::connect_to_server()
-  //   Attempts to connect to the server. Sets the `client_socket` member on
-  //   success and returns prematurely otherwise. Sets the producer state to
-  //   UNITIALIZED.
-  void connect_to_server();
+  //   Attempts to connect to the server and sets the client_socket number if
+  //   connected. Sets the producer state to UNITIALIZED.
+  //   Returns 0 on success and -1 otherwise.
+  int connect_to_server();
 
   // ProducerClient::make_request(request, response)
   //   Makes request to server.
