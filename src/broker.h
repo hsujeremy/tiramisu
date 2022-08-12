@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "storage.h"
 
-#define MAX_PRODUCERS 1
+#define MAX_PRODUCERS 15
 
 enum ClientType {
   PRODUCER,
