@@ -15,61 +15,7 @@
 
 BrokerManager* broker = nullptr;
 
-void Server::setup() {
-  if (!broker) {
-    printf("BrokerManager not initialized!\n");
-    return;
-  }
-
-  size_t len;
-  sockaddr_un local;
-
-  printf("Setting up server...\n");
-  server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
-  if (server_socket == -1) {
-    printf("Failed to create socket\n");
-    return;
-  }
-
-  local.sun_family = AF_UNIX;
-  strncpy(local.sun_path, SOCK_PATH, strlen(SOCK_PATH) + 1);
-  unlink(local.sun_path);
-
-  len = strlen(local.sun_path) + sizeof(local.sun_family) + 1;
-  if (bind(server_socket, (sockaddr*)&local, len) == -1) {
-    printf("Socket failed to bind\n");
-    return;
-  }
-
-  if (listen(server_socket, 5) == -1) {
-    printf("Failed to listen on socket\n");
-  }
-}
-
 int main() {
-  // broker = new BrokerManager();
-  // Server* server = new Server();
-  // broker->server = server;
-  // server->setup();
-  // if (server->server_socket < 0) {
-  //   exit(1);
-  // }
-  // printf("Server socket %d waiting for a connection...\n",
-  //        server->server_socket);
-
-  // sockaddr_un remote;
-  // socklen_t len = sizeof(remote);
-  // int client_socket = accept(server->server_socket, (sockaddr*)&remote, &len);
-  // if (client_socket == -1) {
-  //   printf("Failed to accept a new connection\n");
-  //   exit(1);
-  // }
-
-  // server->handle_client(client_socket, PRODUCER);
-  // delete server;
-  // delete broker;
-  // return 0;
-
   broker = new BrokerManager();
   Server* server = new Server();
   broker->server = server;

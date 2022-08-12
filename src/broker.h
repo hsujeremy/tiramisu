@@ -15,12 +15,6 @@ enum ClientType {
 struct Server {
   int server_socket = -1;
   std::unordered_map<size_t, size_t> sd_client_map;
-
-  // Server::setup()
-  //   Creates a socket for local communication and sets up a server instance to
-  //   listen on the socket and accept new connections. Sets the `server_socket`
-  //   member on success and returns prematurely otherwise.
-  void setup();
 };
 
 enum RequestedAction {
