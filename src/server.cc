@@ -20,14 +20,7 @@ int main() {
   Server* server = new Server();
   broker->server = server;
 
-  int opt = 1;
-  int new_socket;
   int client_sockets[MAX_CLIENTS] = {0};
-  int activity;
-  int sd;
-  int max_sd;
-
-  struct sockaddr_in addr;
   char buf[1024];
 
   // Set of socket descriptors
@@ -43,6 +36,7 @@ int main() {
   }
 
   // Set the master socket to allow multiple connections
+  int opt = 1;
   int r = setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&opt,
                      sizeof(int));
   if (r < 0) {
@@ -50,6 +44,7 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
+  struct sockaddr_in addr;
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = INADDR_ANY;
   addr.sin_port = htons(PORT);
@@ -77,11 +72,11 @@ int main() {
 
     // Add master socket to set
     FD_SET(master_socket, &readfds);
-    max_sd = master_socket;
+    int max_sd = master_socket;
 
     // Add child sockets to set
     for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-      sd = client_sockets[i];
+      int sd = client_sockets[i];
       if (sd > 0) {
         FD_SET(sd, &readfds);
       }
@@ -89,15 +84,15 @@ int main() {
     }
 
     // Wait indefinitely for activity from at least one of the sockets
-    activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
+    int activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
     if (activity < 0 && errno != EINTR) {
       perror("select error\n");
     }
 
     // Either handle a new connection or some IO operation on an existing one
     if (FD_ISSET(master_socket, &readfds)) {
-      new_socket = accept(master_socket, (struct sockaddr*)&addr,
-                          (socklen_t*)&addrlen);
+      int new_socket = accept(master_socket, (struct sockaddr*)&addr,
+                              (socklen_t*)&addrlen);
       if (new_socket < 0) {
         perror("accept error\n");
         exit(EXIT_FAILURE);
@@ -135,7 +130,7 @@ int main() {
     } else {
       // Handle IO operation on some other socket
       for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-        sd = client_sockets[i];
+        int sd = client_sockets[i];
         if (FD_ISSET(sd, &readfds)) {
           ssize_t nread = read(sd, buf, 1024);
           if (!nread) {
