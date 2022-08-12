@@ -10,7 +10,6 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 
-#define PORT 8888
 #define MAX_CLIENTS 30
 
 BrokerManager* broker = nullptr;

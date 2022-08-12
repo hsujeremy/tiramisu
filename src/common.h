@@ -1,19 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#ifndef SOCK_PATH
-#define SOCK_PATH "producer_unix_socket"
-#endif
-
-enum Status {
-  OK_DONE,
-  UNCATEGORIZED,
-};
-
-struct Message {
-  Status status;
-  unsigned length;
-  char* payload;
-};
+#define PORT 8888
 
 #endif

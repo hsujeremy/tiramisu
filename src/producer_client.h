@@ -4,8 +4,6 @@
 #include <string>
 #include "common.h"
 
-#define PORT 8888
-
 enum ProducerState {
   DISCONNECTED,       // Not connected to the server
   UNINITIALIZED,      // Connected but uninitialized
