@@ -106,7 +106,7 @@ int main() {
       for (int i = 0; i < MAX_PRODUCERS; ++i) {
         if (!broker->producers[i]) {
           prod_idx = i;
-          // Set index in table to be the transactional_id for that producer
+          // Set index in table to be the producer id
           broker->producers[i] = new Producer(new_socket, prod_idx);
           server->sd_client_map.insert(
             std::make_pair<size_t, size_t>(new_socket, i)
@@ -142,11 +142,10 @@ int main() {
             close(sd);
             Producer* exited_prod =
               broker->producers[server->sd_client_map.at(sd)];
-            printf("Exited producer with id %d\n",
-                   exited_prod->transactional_id);
+            printf("Exited producer with id %d\n", exited_prod->id);
             server->sd_client_map.erase(sd);
             client_sockets[i] = 0;
-            broker->producers[exited_prod->transactional_id] = nullptr;
+            broker->producers[exited_prod->id] = nullptr;
             delete exited_prod;
           } else {
             // Echo back the incoming message

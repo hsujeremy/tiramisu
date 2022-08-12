@@ -4,9 +4,9 @@
 #include <vector>
 #include "broker.h"
 
-Producer::Producer(const int client_socket, const int id) {
-  socket = client_socket;
-  transactional_id = id;
+Producer::Producer(const int client_socket, const int producer_id) {
+  id = producer_id;
+  sock = client_socket;
 }
 
 Producer::~Producer() {
@@ -33,7 +33,7 @@ RequestedAction BrokerManager::parse_request(const std::string request) {
 }
 
 int Producer::init_transactions() {
-  return transactional_id;
+  return id;
 }
 
 int Producer::begin_transaction() {

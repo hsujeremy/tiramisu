@@ -27,14 +27,12 @@ enum RequestedAction {
 };
 
 struct Producer {
-  int socket;
-  // Every producer has a single transactional ID during the lifetime of its
-  // connection (for now)
-  int transactional_id;
+  int id;
+  int sock;
   Table* table = nullptr;
   bool streaming = false;
 
-  Producer(const int client_socket, const int id);
+  Producer(const int client_socket, const int producer_id);
   ~Producer();
 
   // Producer::init_transactions()
