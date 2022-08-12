@@ -21,14 +21,6 @@ struct Server {
   //   listen on the socket and accept new connections. Sets the `server_socket`
   //   member on success and returns prematurely otherwise.
   void setup();
-
-  // Server::handle_client(client_socket, client_type)
-  //   Handles an incoming client connection on `client_socket` and attempts to
-  //   create a Producer or Consumer object for that client, depending on the
-  //   `client_type`. The server blocks on the client connection processing
-  //   requests and sending back responses until the
-  //   client closes the connection.
-  void handle_client(const int client_socket, const ClientType client_type);
 };
 
 enum RequestedAction {
