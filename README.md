@@ -6,6 +6,15 @@ easily stream records.
 Why is this system called Tiramisu? I guess it sounds cool and is one of my
 favorite desserts. And it also rhymes with my name!
 
+## Design
+
+### Handling Multiple Clients
+
+Unlike other implementations of servers that can scale to process multiple
+clients, Tiramisu **does not** assign each process its own thread. Instead,
+Tiramisu makes use of Linux's `select()` system call, which allows the server to
+keep track of multiple socket descriptors simultaneously.
+
 ## How to Run
 
 ### Docker Setup
