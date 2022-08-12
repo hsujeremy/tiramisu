@@ -103,14 +103,14 @@ int ProducerClient::init_transactions() {
   // Assume for now that there this function is not called twice
   assert(state == UNINITIALIZED);
 
-  transactional_id = make_request("init_transactions");
-  if (transactional_id < 0) {
+  id = make_request("init_transactions");
+  if (id < 0) {
     printf("Error getting the transactional ID!\n");
     return -1;
   }
-  printf("transactional_id from server: %d\n", transactional_id);
+  printf("Producer id from server: %d\n", id);
   state = INITIALIZED;
-  return transactional_id;
+  return id;
 }
 
 int ProducerClient::begin_transaction() {

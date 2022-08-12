@@ -12,8 +12,8 @@ enum ProducerState {
 };
 
 struct ProducerClient {
+  int id;
   int client_socket;
-  int transactional_id;
   ProducerState state = DISCONNECTED;
 
   // ProducerClient::connect_to_server()
