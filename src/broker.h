@@ -6,6 +6,7 @@
 #include "storage.h"
 
 #define MAX_PRODUCERS 15
+#define MAX_CONSUMERS 15
 
 enum ClientType {
   PRODUCER,
@@ -31,6 +32,7 @@ struct Producer {
   int sock;
   Table* table = nullptr;
   bool streaming = false;
+  std::vector<int> subscribers;
 
   Producer(const int client_socket, const int producer_id);
   ~Producer();
@@ -64,9 +66,19 @@ private:
   int cleanup_transaction(const bool save);
 };
 
+struct Consumer {
+  int id;
+
+  Consumer(const int consumer_id);
+  void subscribe();
+  void unsubscribe();
+  void close();
+};
+
 struct BrokerManager {
   Server* server;
   Producer* producers[MAX_PRODUCERS] = {nullptr};
+  Consumer* consumers[MAX_CONSUMERS] = {nullptr};
 
   // BrokerManager::parse_request(request)
   //   Parses the request message and returns the correct action type.
