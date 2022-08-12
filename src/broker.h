@@ -2,6 +2,7 @@
 #define BROKER_H
 
 #include <iostream>
+#include <unordered_map>
 #include "storage.h"
 
 #define MAX_PRODUCERS 1
@@ -13,6 +14,7 @@ enum ClientType {
 
 struct Server {
   int server_socket = -1;
+  std::unordered_map<size_t, size_t> sd_client_map;
 
   // Server::setup()
   //   Creates a socket for local communication and sets up a server instance to

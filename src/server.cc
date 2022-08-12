@@ -247,6 +247,10 @@ int main() {
           prod_idx = i;
           // Set index in table to be the transactional_id for that producer
           broker->producers[i] = new Producer(new_socket, prod_idx);
+          server->sd_client_map.insert(
+            std::make_pair<size_t, size_t>(new_socket, i)
+          );
+          printf("Created producer with id %d\n", prod_idx);
         }
       }
 
@@ -269,11 +273,20 @@ int main() {
         if (FD_ISSET(sd, &readfds)) {
           ssize_t nread = read(sd, buf, 1024);
           if (!nread) {
+            // If peer disconnected, then close the socket descriptor and clean
+            // up the associated producer
             getpeername(sd, (struct sockaddr*)&addr, (socklen_t*)&addrlen);
             printf("Host disconnected with IP %s and port %d\n",
                    inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
             close(sd);
+            Producer* exited_prod =
+              broker->producers[server->sd_client_map.at(sd)];
+            printf("Exited producer with id %d\n",
+                   exited_prod->transactional_id);
+            server->sd_client_map.erase(sd);
             client_sockets[i] = 0;
+            broker->producers[exited_prod->transactional_id] = nullptr;
+            delete exited_prod;
           } else {
             // Echo back the incoming message
             buf[nread] = '\0';
