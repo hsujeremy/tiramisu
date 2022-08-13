@@ -152,7 +152,7 @@ int main() {
             std::string request(buf);
             RequestedAction action = broker->parse_request(request);
 
-            int result = broker->execute(PRODUCER, action, request);
+            int result = broker->execute(PRODUCER, sd, action, request);
             std::string ser_result = std::to_string(result);
 
             send(sd, ser_result.c_str(), strlen(ser_result.c_str()), 0);

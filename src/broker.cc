@@ -86,18 +86,19 @@ int Producer::commit_transaction() {
   return cleanup_transaction(true);
 }
 
-int BrokerManager::execute(ClientType client, RequestedAction action,
+int BrokerManager::execute(ClientType client_type, const int sd,
+                           RequestedAction action,
                            std::string serialized_args) {
   // No need to distinguish between client types now since consumer-side is not
   // implemented
-  (void)client;
+  (void)client_type;
 
-  Producer* producer;
-  // Trivial for now since there is at most one producer but good futureproofing
-  for (int i = 0; i < MAX_PRODUCERS; ++i) {
-    producer = producers[i];
-    break;
+  if (!server->sd_client_map.count(sd)) {
+    perror("Socket descriptor not found in map!\n");
+    return -1;
   }
+  Producer* producer = producers[server->sd_client_map.at(sd)];
+  assert(producer);
 
   int result = 0;
   switch (action) {

@@ -88,7 +88,7 @@ struct BrokerManager {
   //   Executes the specified action for the specified client, passing in
   //   `serialized_args` if necessary.
   //   Returns a nonnegative integer on success and -1 otherwise.
-  int execute(ClientType client, RequestedAction action,
+  int execute(ClientType client, const int sd, RequestedAction action,
               std::string serialized_args);
 };
 
