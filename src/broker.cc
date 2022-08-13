@@ -46,7 +46,8 @@ int Producer::begin_transaction() {
   return 0;
 }
 
-int Producer::send_record(std::string serialized_args) {
+int Producer::send_record(std::string serialized_args,
+                          std::unordered_map<std::string, Table*> table_map) {
   // Split serialized request into arguments
   std::vector<std::string> substrings;
   std::stringstream sstream(serialized_args);
@@ -62,8 +63,14 @@ int Producer::send_record(std::string serialized_args) {
   int data = std::stoi(substrings[2]);
   std::time_t event_time = std::stol(substrings[3]);
 
-  assert(table);
-  table->insert_row(data, event_time);
+  if (!table_map.count(topic)) {
+    Table* new_table = new Table();
+    // TODO: Need to clean up table_map in BrokerManager destructor
+    table_map.insert(std::make_pair(topic, new_table));
+  }
+  Table* ttable = table_map.at(topic);
+  assert(ttable);
+  ttable->insert_row(data, event_time);
   return 0;
 }
 
@@ -111,7 +118,7 @@ int BrokerManager::execute(ClientType client_type, const int sd,
       break;
 
     case SEND_RECORD:
-      result = producer->send_record(serialized_args);
+      result = producer->send_record(serialized_args, table_map);
       break;
 
     case ABORT_TRANSACTION:
