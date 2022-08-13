@@ -96,6 +96,7 @@ int BrokerManager::execute(ClientType client, RequestedAction action,
   // Trivial for now since there is at most one producer but good futureproofing
   for (int i = 0; i < MAX_PRODUCERS; ++i) {
     producer = producers[i];
+    break;
   }
 
   int result = 0;

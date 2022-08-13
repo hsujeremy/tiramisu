@@ -107,10 +107,9 @@ int main() {
           prod_idx = i;
           // Set index in table to be the producer id
           broker->producers[i] = new Producer(new_socket, prod_idx);
-          server->sd_client_map.insert(
-            std::make_pair<size_t, size_t>(new_socket, i)
-          );
+          server->sd_client_map.insert(std::make_pair(new_socket, i));
           printf("Created producer with id %d\n", prod_idx);
+          break;
         }
       }
 
