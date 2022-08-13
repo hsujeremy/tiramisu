@@ -47,7 +47,7 @@ struct ProducerClient {
   //   in between calls to begin_transaction and either commit_transaction() or
   //   abort_transaction().
   //   Returns 0 on success, -1 on server error, and -2 on client error.
-  int send_record(const int data);
+  int send_record(const int data, const std::string topic = "general");
 
   // ProducerClient::abort_transaction()
   //   Aborts the ongoing transaction and any unflushed produce messages.

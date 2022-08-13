@@ -57,9 +57,10 @@ int Producer::send_record(std::string serialized_args) {
   }
 
   // Convert data and event_time parameters back to their original types
-  assert(substrings.size() == 3 && substrings[0].compare("send_record") == 0);
-  int data = std::stoi(substrings[1]);
-  std::time_t event_time = std::stol(substrings[2]);
+  assert(substrings.size() == 4 && substrings[0].compare("send_record") == 0);
+  std::string topic = substrings[1];
+  int data = std::stoi(substrings[2]);
+  std::time_t event_time = std::stol(substrings[3]);
 
   assert(table);
   table->insert_row(data, event_time);

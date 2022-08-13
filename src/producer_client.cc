@@ -117,10 +117,11 @@ int ProducerClient::begin_transaction() {
   return make_request("begin_transaction");
 }
 
-int ProducerClient::send_record(const int data) {
+// "send_record,<topic>,<data>,<event_time>"
+int ProducerClient::send_record(const int data, const std::string topic) {
   std::time_t event_time = std::time(nullptr);
-  std::string request =
-    "send_record," + std::to_string(data) + "," + std::to_string(event_time);
+  std::string request = "send_record," + topic + "," + std::to_string(data) +
+                        "," + std::to_string(event_time);
   return make_request(request);
 }
 
