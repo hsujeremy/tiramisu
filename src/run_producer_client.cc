@@ -10,8 +10,7 @@
 
 int main() {
     ProducerClient* prod = new ProducerClient();
-    int r = prod->connect_to_server();
-    if (r < 0) {
+    if (prod->connect_to_server() < 0) {
         perror("Error connecting to server!\n");
         return -1;
     }

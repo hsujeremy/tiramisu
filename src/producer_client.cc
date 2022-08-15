@@ -23,15 +23,13 @@ int ProducerClient::connect_to_server() {
     server_addr.sin_port = htons(PORT);
 
     // Convert IPv4 and IPv6 address from text to binary
-    int r = inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
-    if (r <= 0) {
+    if (inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr) <= 0) {
         perror("Invalid address! Address not supported\n");
         return -1;
     }
 
-    r = connect(client_socket, (struct sockaddr*)&server_addr,
-                sizeof(struct sockaddr));
-    if (r < 0) {
+    if (connect(client_socket, (struct sockaddr*)&server_addr,
+                sizeof(struct sockaddr)) < 0) {
         perror("Connection failed\n");
         return -1;
     }
@@ -51,8 +49,7 @@ int ProducerClient::make_request(const std::string request) {
     // TODO: Check server connection beforehand
     char buf[1024] = {0};
 
-    int r = send(client_socket, request.c_str(), request.length(), 0);
-    if (r < 0) {
+    if (send(client_socket, request.c_str(), request.length(), 0) < 0) {
         perror("Error sending to server\n");
         return -1;
     }

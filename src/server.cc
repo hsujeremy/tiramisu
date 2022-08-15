@@ -36,9 +36,8 @@ int main() {
 
     // Set the master socket to allow multiple connections
     int opt = 1;
-    int r = setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&opt,
-                        sizeof(int));
-    if (r < 0) {
+    if (setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&opt,
+                   sizeof(int)) < 0) {
         perror("Failed on setsockopt\n");
         exit(EXIT_FAILURE);
     }
@@ -49,16 +48,14 @@ int main() {
     addr.sin_port = htons(PORT);
 
     // Bind socket to localhost port 8888
-    r = bind(master_socket, (struct sockaddr*)&addr, sizeof(addr));
-    if (r < 0) {
+    if (bind(master_socket, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         perror("bind failed\n");
         exit(EXIT_FAILURE);
     }
     printf("Listening on port %d\n", PORT);
 
     // Specify max of 3 pending connections for the master socket at any point
-    r = listen(master_socket, 3);
-    if (r < 0) {
+    if (listen(master_socket, 3) < 0) {
         perror("listen failed\n");
         exit(EXIT_FAILURE);
     }
@@ -83,8 +80,8 @@ int main() {
         }
 
         // Wait indefinitely for activity from at least one of the sockets
-        int activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
-        if (activity < 0 && errno != EINTR) {
+        if (select(max_sd + 1, &readfds, nullptr, nullptr, nullptr) < 0
+            && errno != EINTR) {
             perror("select error\n");
         }
 
@@ -114,8 +111,7 @@ int main() {
                 }
             }
 
-            r = send(new_socket, message.c_str(), message.length(), 0);
-            if (r < 0) {
+            if (send(new_socket, message.c_str(), message.length(), 0) < 0) {
                 perror("Error sending connection message\n");
             }
 
