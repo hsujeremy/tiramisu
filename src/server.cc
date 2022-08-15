@@ -154,11 +154,11 @@ int main() {
                         std::string request(buf);
                         RequestedAction action = broker->parse_request(request);
 
-                        int result = broker->execute(PRODUCER, sd, action,
-                                                     request);
-                        std::string ser_result = std::to_string(result);
-
-                        send(sd, ser_result.c_str(), strlen(ser_result.c_str()), 0);
+                        int result =
+                            broker->execute(PRODUCER, sd, action, request);
+                        std::string serialized_result = std::to_string(result);
+                        send(sd, serialized_result.c_str(),
+                             serialized_result.length(), 0);
                     }
                 }
             }
