@@ -31,7 +31,14 @@ void Table::flush_to_disk() {
         mkdir(dirname.c_str(), (mode_t)0777);
     }
 
-    std::ofstream file(dirname + "/output.csv");
+    std::string filename;
+    if (name == "") {
+        filename = dirname + "/output.csv";
+    } else {
+        filename = dirname + "/" + name + ".csv";
+    }
+
+    std::ofstream file(filename);
     for (size_t i = 0; i < rows.size(); ++i) {
         file << rows[i].serialize() << '\n';
     }

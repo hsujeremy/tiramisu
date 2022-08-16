@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cstring>
 #include <iostream>
 #include <unistd.h>
@@ -177,6 +178,8 @@ int main() {
     delete server;
     // Iterate through table map and delete all tables
     for (auto const& topic_table : broker->table_map) {
+        assert(topic_table.second);
+        topic_table.second->flush_to_disk();
         delete topic_table.second;
     }
     delete broker;
