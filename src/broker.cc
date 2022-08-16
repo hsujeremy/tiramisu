@@ -37,7 +37,10 @@ int Producer::init_transactions() {
 }
 
 int Producer::begin_transaction() {
-    // TODO: Handle when streaming is already true
+    if (streaming) {
+        perror("Streaming already in progress!\n");
+        return -1;
+    }
     streaming = true;
     return 0;
 }
@@ -78,10 +81,13 @@ int Producer::cleanup_transaction() {
 }
 
 int Producer::abort_transaction() {
+    streaming = false;
     return cleanup_transaction();
 }
 
-int Producer::commit_transaction(std::unordered_map<std::string, Table*>& table_map) {
+int Producer::commit_transaction(
+    std::unordered_map<std::string, Table*>& table_map) {
+    streaming = false;
     for (auto const& topic_table : input_table_map) {
         // Find corresponding result table or create if not found
         std::string topic = topic_table.first;
