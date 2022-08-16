@@ -31,6 +31,7 @@ struct Producer {
     int id;
     int sock;
     Table* table = nullptr;
+    std::unordered_map<std::string, Table*> input_table_map;
     bool streaming = false;
     std::vector<int> subscribers;
 
@@ -47,8 +48,7 @@ struct Producer {
 
     // Producer::send_record()
     //     Creates a new row and performs a relational insert into the table.
-    int send_record(std::string serialized_args,
-                    std::unordered_map<std::string, Table*>& table_map);
+    int send_record(std::string serialized_args);
 
     // Producer::abort_transaction()
     //     Frees the table and sets the `streaming` to false without writing to
@@ -58,14 +58,14 @@ struct Producer {
     // Producer::commit_transaction()
     //     Commits the transaction by writing it out to disk. Frees the table
     //     and sets `streaming` to false.
-    int commit_transaction();
+    int commit_transaction(std::unordered_map<std::string, Table*>& table_map);
 
 private:
     // Producer::cleanup_transaction(save)
     //     Frees the relevant table and sets `streaming` to false. If `save` is
     //     set as true, then this method also writes the table to disk before
     //     freeing.
-    int cleanup_transaction(const bool save);
+    int cleanup_transaction();
 };
 
 struct Consumer {

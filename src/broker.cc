@@ -37,17 +37,12 @@ int Producer::init_transactions() {
 }
 
 int Producer::begin_transaction() {
-    table = new Table();
-    if (!table) {
-        printf("Failed to allocate space for table!\n");
-        return -1;
-    }
+    // TODO: Handle when streaming is already true
     streaming = true;
     return 0;
 }
 
-int Producer::send_record(std::string serialized_args,
-                          std::unordered_map<std::string, Table*>& table_map) {
+int Producer::send_record(std::string serialized_args) {
     // Split serialized request into arguments
     std::vector<std::string> substrings;
     std::stringstream sstream(serialized_args);
@@ -63,33 +58,49 @@ int Producer::send_record(std::string serialized_args,
     int data = std::stoi(substrings[2]);
     std::time_t event_time = std::stol(substrings[3]);
 
-    if (!table_map.count(topic)) {
+    // Add to the correct input table
+    if (!input_table_map.count(topic)) {
         Table* new_table = new Table(topic);
-        table_map.insert(std::make_pair(topic, new_table));
+        input_table_map.insert(std::make_pair(topic, new_table));
     }
-    Table* ttable = table_map.at(topic);
-    assert(ttable);
-    ttable->insert_row(data, event_time);
+    Table* input_table = input_table_map.at(topic);
+    assert(input_table);
+    input_table->insert_row(data, event_time);
     return 0;
 }
 
-int Producer::cleanup_transaction(const bool save) {
-    assert(table);
-    if (save) {
-        table->flush_to_disk();
+int Producer::cleanup_transaction() {
+    for (auto const& topic_table : input_table_map) {
+        assert(topic_table.second);
+        delete topic_table.second;
     }
-    streaming = false;
-    delete table;
-    table = nullptr;
     return 0;
 }
 
 int Producer::abort_transaction() {
-    return cleanup_transaction(false);
+    return cleanup_transaction();
 }
 
-int Producer::commit_transaction() {
-    return cleanup_transaction(true);
+int Producer::commit_transaction(std::unordered_map<std::string, Table*>& table_map) {
+    for (auto const& topic_table : input_table_map) {
+        // Find corresponding result table or create if not found
+        std::string topic = topic_table.first;
+        Table* input_table = topic_table.second;
+        if (!table_map.count(topic)) {
+            Table* new_table = new Table(topic);
+            table_map.insert(std::make_pair(topic, new_table));
+        }
+        Table* result_table = table_map.at(topic);
+        assert(input_table && result_table);
+
+        // Then merge all rows from input table into result table
+        for (auto const& row : input_table->rows) {
+            result_table->insert_row(row.data, row.event_time);
+        }
+    }
+
+    // Finally, clean up input table map
+    return cleanup_transaction();
 }
 
 int BrokerManager::execute(ClientType client_type, const int sd,
@@ -117,7 +128,7 @@ int BrokerManager::execute(ClientType client_type, const int sd,
             break;
 
         case SEND_RECORD:
-            result = producer->send_record(serialized_args, table_map);
+            result = producer->send_record(serialized_args);
             break;
 
         case ABORT_TRANSACTION:
@@ -125,7 +136,7 @@ int BrokerManager::execute(ClientType client_type, const int sd,
             break;
 
         case COMMIT_TRANSACTION:
-            result = producer->commit_transaction();
+            result = producer->commit_transaction(table_map);
             break;
 
         case UNKNOWN_ACTION:
