@@ -14,8 +14,11 @@ struct Row {
 };
 
 struct Table {
+    std::string name = "";
     std::vector<Row> rows;
 
+    Table();
+    Table(const std::string name);
     void insert_row(const int data, const std::time_t event_time);
     void flush_to_disk();
 };

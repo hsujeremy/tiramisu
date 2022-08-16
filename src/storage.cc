@@ -9,6 +9,13 @@ std::string Row::serialize() {
            std::to_string(processing_time);
 }
 
+Table::Table() {
+}
+
+Table::Table(const std::string table_name) {
+    name = table_name;
+}
+
 void Table::insert_row(const int data, const std::time_t event_time) {
     Row row;
     row.data = data;

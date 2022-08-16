@@ -64,8 +64,7 @@ int Producer::send_record(std::string serialized_args,
     std::time_t event_time = std::stol(substrings[3]);
 
     if (!table_map.count(topic)) {
-        Table* new_table = new Table();
-        // TODO: Need to clean up table_map in BrokerManager destructor
+        Table* new_table = new Table(topic);
         table_map.insert(std::make_pair(topic, new_table));
     }
     Table* ttable = table_map.at(topic);
