@@ -30,7 +30,6 @@ enum RequestedAction {
 struct Producer {
     int id;
     int sock;
-    Table* table = nullptr;
     std::unordered_map<std::string, Table*> input_table_map;
     bool streaming = false;
     std::vector<int> subscribers;

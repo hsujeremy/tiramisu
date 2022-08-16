@@ -9,9 +9,6 @@ Producer::Producer(const int client_socket, const int producer_id) {
     sock = client_socket;
 }
 
-Producer::~Producer() {
-    if (table) {
-        delete table;
     }
 }
 
