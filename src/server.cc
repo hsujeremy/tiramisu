@@ -175,6 +175,10 @@ int main() {
     }
 
     delete server;
+    // Iterate through table map and delete all tables
+    for (auto const& topic_table : broker->table_map) {
+        delete topic_table.second;
+    }
     delete broker;
 
     return 0;
