@@ -117,6 +117,11 @@ int Producer::commit_transaction(TableMap& result_tables) {
     return cleanup_transaction();
 }
 
+BrokerManager::~BrokerManager() {
+    result_tables.flush_tables();
+    result_tables.free_tables();
+}
+
 int BrokerManager::execute(ClientType client_type, const int sd,
                            RequestedAction action,
                            std::string serialized_args) {

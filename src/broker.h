@@ -88,6 +88,8 @@ struct BrokerManager {
     Consumer* consumers[MAX_CONSUMERS] = {nullptr};
     TableMap result_tables;
 
+    ~BrokerManager();
+
     // BrokerManager::parse_request(request)
     //     Parses the request message and returns the correct action type.
     RequestedAction parse_request(const std::string request);

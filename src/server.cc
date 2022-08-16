@@ -176,8 +176,6 @@ int main() {
     }
 
     delete server;
-    broker->result_tables.flush_tables();
-    broker->result_tables.free_tables();
     delete broker;
 
     return 0;
