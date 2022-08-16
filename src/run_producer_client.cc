@@ -23,7 +23,6 @@ int main() {
     prod->commit_transaction();
     prod->close_producer();
 
-    // TODO: Do we also need to close the socket?
     close(prod->client_socket);
 
     delete prod;
