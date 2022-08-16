@@ -176,7 +176,7 @@ int main() {
     }
 
     delete server;
-    // Iterate through table map and delete all tables
+    // For each table in the table map, write to disk and free
     for (auto const& topic_table : broker->table_map) {
         assert(topic_table.second);
         topic_table.second->flush_to_disk();
