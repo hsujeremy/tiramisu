@@ -47,7 +47,7 @@ int Producer::begin_transaction() {
 }
 
 int Producer::send_record(std::string serialized_args,
-                          std::unordered_map<std::string, Table*> table_map) {
+                          std::unordered_map<std::string, Table*>& table_map) {
     // Split serialized request into arguments
     std::vector<std::string> substrings;
     std::stringstream sstream(serialized_args);

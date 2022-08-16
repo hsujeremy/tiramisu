@@ -48,7 +48,7 @@ struct Producer {
     // Producer::send_record()
     //     Creates a new row and performs a relational insert into the table.
     int send_record(std::string serialized_args,
-                    std::unordered_map<std::string, Table*> table_map);
+                    std::unordered_map<std::string, Table*>& table_map);
 
     // Producer::abort_transaction()
     //     Frees the table and sets the `streaming` to false without writing to
