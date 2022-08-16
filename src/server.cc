@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <signal.h>
 #include "broker.h"
 #include "common.h"
 
@@ -13,6 +14,11 @@
 #define MAX_CLIENTS 30
 
 BrokerManager* broker = nullptr;
+volatile sig_atomic_t terminate = 0;
+
+void handler(int signum) {
+    terminate = 1;
+}
 
 int main() {
     broker = new BrokerManager();
@@ -61,6 +67,7 @@ int main() {
     }
 
     // Accept incoming connections
+    signal(SIGINT, handler);
     size_t addrlen = sizeof(addr);
     while (true) {
         // Clear socket set
@@ -80,9 +87,15 @@ int main() {
         }
 
         // Wait indefinitely for activity from at least one of the sockets
-        if (select(max_sd + 1, &readfds, nullptr, nullptr, nullptr) < 0
+        // while there's no keyboard interrupt
+        if (!terminate
+            && select(max_sd + 1, &readfds, nullptr, nullptr, nullptr) < 0
             && errno != EINTR) {
             perror("select error\n");
+        }
+
+        if (terminate) {
+            break;
         }
 
         // Either handle a new connection or some IO operation on an existing
