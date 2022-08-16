@@ -4,12 +4,35 @@
 #include <vector>
 #include "broker.h"
 
+Table* TableMap::find_or_create_table(const std::string topic) {
+    if (!map.count(topic)) {
+        Table* new_table = new Table(topic);
+        if (!new_table) {
+            perror("Unable to create new table\n");
+            return nullptr;
+        }
+        map.insert(std::make_pair(topic, new_table));
+    }
+    return map.at(topic);
+}
+
+void TableMap::flush_tables() {
+    for (auto const& topic_table : map) {
+        assert(topic_table.second);
+        topic_table.second->flush_to_disk();
+    }
+}
+
+void TableMap::free_tables() {
+    for (auto const& topic_table : map) {
+        assert(topic_table.second);
+        delete topic_table.second;
+    }
+}
+
 Producer::Producer(const int client_socket, const int producer_id) {
     id = producer_id;
     sock = client_socket;
-}
-
-    }
 }
 
 RequestedAction BrokerManager::parse_request(const std::string request) {
@@ -59,21 +82,14 @@ int Producer::send_record(std::string serialized_args) {
     std::time_t event_time = std::stol(substrings[3]);
 
     // Add to the correct input table
-    if (!input_table_map.count(topic)) {
-        Table* new_table = new Table(topic);
-        input_table_map.insert(std::make_pair(topic, new_table));
-    }
-    Table* input_table = input_table_map.at(topic);
+    Table* input_table = input_tables.find_or_create_table(topic);
     assert(input_table);
     input_table->insert_row(data, event_time);
     return 0;
 }
 
 int Producer::cleanup_transaction() {
-    for (auto const& topic_table : input_table_map) {
-        assert(topic_table.second);
-        delete topic_table.second;
-    }
+    input_tables.free_tables();
     return 0;
 }
 
@@ -82,18 +98,13 @@ int Producer::abort_transaction() {
     return cleanup_transaction();
 }
 
-int Producer::commit_transaction(
-    std::unordered_map<std::string, Table*>& table_map) {
+int Producer::commit_transaction(TableMap& result_tables) {
     streaming = false;
-    for (auto const& topic_table : input_table_map) {
+    for (auto const& topic_table : input_tables.map) {
         // Find corresponding result table or create if not found
         std::string topic = topic_table.first;
         Table* input_table = topic_table.second;
-        if (!table_map.count(topic)) {
-            Table* new_table = new Table(topic);
-            table_map.insert(std::make_pair(topic, new_table));
-        }
-        Table* result_table = table_map.at(topic);
+        Table* result_table = result_tables.find_or_create_table(topic);
         assert(input_table && result_table);
 
         // Then merge all rows from input table into result table
@@ -139,7 +150,7 @@ int BrokerManager::execute(ClientType client_type, const int sd,
             break;
 
         case COMMIT_TRANSACTION:
-            result = producer->commit_transaction(table_map);
+            result = producer->commit_transaction(result_tables);
             break;
 
         case UNKNOWN_ACTION:

@@ -27,15 +27,22 @@ enum RequestedAction {
     UNKNOWN_ACTION,
 };
 
+struct TableMap {
+    std::unordered_map<std::string, Table*> map;
+
+    Table* find_or_create_table(const std::string topic);
+    void flush_tables();
+    void free_tables();
+};
+
 struct Producer {
     int id;
     int sock;
-    std::unordered_map<std::string, Table*> input_table_map;
+    TableMap input_tables;
     bool streaming = false;
     std::vector<int> subscribers;
 
     Producer(const int client_socket, const int producer_id);
-    ~Producer();
 
     // Producer::init_transactions()
     //     Return the transactional ID.
@@ -57,7 +64,7 @@ struct Producer {
     // Producer::commit_transaction()
     //     Commits the transaction by writing it out to disk. Frees the table
     //     and sets `streaming` to false.
-    int commit_transaction(std::unordered_map<std::string, Table*>& table_map);
+    int commit_transaction(TableMap& result_tables);
 
 private:
     // Producer::cleanup_transaction(save)
@@ -79,7 +86,7 @@ struct BrokerManager {
     Server* server;
     Producer* producers[MAX_PRODUCERS] = {nullptr};
     Consumer* consumers[MAX_CONSUMERS] = {nullptr};
-    std::unordered_map<std::string, Table*> table_map;
+    TableMap result_tables;
 
     // BrokerManager::parse_request(request)
     //     Parses the request message and returns the correct action type.
