@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include "common.h"
 #include "storage.h"
 
 #define MAX_PRODUCERS 15

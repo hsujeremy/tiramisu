@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include "broker.h"
+#include "common.h"
 
 Table* TableMap::find_or_create_table(const std::string topic) {
     if (!map.count(topic)) {
@@ -36,7 +37,7 @@ Producer::Producer(const int client_socket, const int producer_id) {
 }
 
 RequestedAction BrokerManager::parse_request(const std::string request) {
-    printf("client request: %s\n", request.c_str());
+    dbg_printf(DBG, "client request: %s\n", request.c_str());
     // Parse the string and return the request
     if (request.compare("init_transactions") == 0) {
         return INIT_TRANSACTIONS;
@@ -162,6 +163,6 @@ int BrokerManager::execute(ClientType client_type, const int sd,
             result = 0;
             break;
     }
-    printf("result from server: %d\n", result);
+    dbg_printf(DBG, "result from server: %d\n", result);
     return result;
 }

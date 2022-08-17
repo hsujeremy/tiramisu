@@ -59,7 +59,7 @@ int main() {
         perror("bind failed\n");
         exit(EXIT_FAILURE);
     }
-    printf("Listening on port %d\n", PORT);
+    dbg_printf(DBG, "Listening on port %d\n", PORT);
 
     // Specify max of 3 pending connections for the master socket at any point
     if (listen(master_socket, 3) < 0) {
@@ -109,7 +109,7 @@ int main() {
                 exit(EXIT_FAILURE);
             }
 
-            printf("New connection with socket fd %d, IP %s, and port number %d\n",
+            dbg_printf(DBG, "New connection with socket fd %d, IP %s, and port number %d\n",
                     new_socket, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
             // Create Producer by default for now
@@ -120,7 +120,7 @@ int main() {
                     // Set index in table to be the producer id
                     broker->producers[i] = new Producer(new_socket, prod_idx);
                     server->sd_client_map.insert(std::make_pair(new_socket, i));
-                    printf("Created producer with id %d\n", prod_idx);
+                    dbg_printf(DBG, "Created producer with id %d\n", prod_idx);
                     break;
                 }
             }
@@ -147,12 +147,12 @@ int main() {
                         // descriptor and clean up the associated producer
                         getpeername(sd, (struct sockaddr*)&addr,
                                     (socklen_t*)&addrlen);
-                        printf("Host disconnected with IP %s and port %d\n",
+                        dbg_printf(DBG, "Host disconnected with IP %s and port %d\n",
                             inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
                         close(sd);
                         Producer* exited_prod =
                             broker->producers[server->sd_client_map.at(sd)];
-                        printf("Exited producer with id %d\n", exited_prod->id);
+                        dbg_printf(DBG, "Exited producer with id %d\n", exited_prod->id);
                         server->sd_client_map.erase(sd);
                         client_sockets[i] = 0;
                         broker->producers[exited_prod->id] = nullptr;
@@ -160,7 +160,7 @@ int main() {
                     } else {
                         // Echo back the incoming message
                         buf[nread] = '\0';
-                        printf("From client: %s\n", buf);
+                        dbg_printf(DBG, "From client: %s\n", buf);
                         std::string request(buf);
                         RequestedAction action = broker->parse_request(request);
 

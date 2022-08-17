@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 
 int ProducerClient::connect_to_server() {
-    printf("Attemping to connect to server at port %d\n", PORT);
+    dbg_printf(DBG, "Attemping to connect to server at port %d\n", PORT);
     struct sockaddr_in server_addr;
 
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -37,11 +37,11 @@ int ProducerClient::connect_to_server() {
     char buf[1024] = {0};
     ssize_t nread = read(client_socket, buf, 1024);
     if (nread) {
-        printf("From server: %s\n", buf);
+        dbg_printf(DBG, "From server: %s\n", buf);
     }
 
     state = UNINITIALIZED;
-    printf("Producer connected at socket %d\n", client_socket);
+    dbg_printf(DBG, "Producer connected at socket %d\n", client_socket);
     return 0;
 }
 
@@ -62,13 +62,13 @@ int ProducerClient::make_request(const std::string request) {
 
     buf[nread] = '\0';
     std::string response(buf);
-    printf("From server: %s\n", response.c_str());
+    dbg_printf(DBG, "From server: %s\n", response.c_str());
 
     int status;
     try {
         status = std::stoi(response);
     } catch (const std::invalid_argument& ia) {
-        printf("Unable to cast string \"%s\" to int\n", response.c_str());
+        dbg_printf(DBG, "Unable to cast string \"%s\" to int\n", response.c_str());
         return -2;
     }
     return status;
@@ -76,25 +76,25 @@ int ProducerClient::make_request(const std::string request) {
 
 void ProducerClient::close_connection() {
     if (client_socket < 0) {
-        printf("Invalid client_socket %d\n", client_socket);
+        dbg_printf(DBG, "Invalid client_socket %d\n", client_socket);
         return;
     }
 
     if (state == DISCONNECTED) {
-        printf("Connection already closed!\n");
+        dbg_printf(DBG, "Connection already closed!\n");
         return;
     }
 
     if (close(client_socket) < 0) {
-        printf("Failed to close connection\n");
+        dbg_printf(DBG, "Failed to close connection\n");
     }
     state = DISCONNECTED;
-    printf("Successfully closed connection\n");
+    dbg_printf(DBG, "Successfully closed connection\n");
 }
 
 int ProducerClient::init_transactions() {
     if (client_socket < 0 || state == DISCONNECTED) {
-        printf("Client not connected to server\n");
+        dbg_printf(DBG, "Client not connected to server\n");
         return -1;
     }
 
@@ -103,10 +103,10 @@ int ProducerClient::init_transactions() {
 
     id = make_request("init_transactions");
     if (id < 0) {
-        printf("Error getting the transactional ID!\n");
+        dbg_printf(DBG, "Error getting the transactional ID!\n");
         return -1;
     }
-    printf("Producer id from server: %d\n", id);
+    dbg_printf(DBG, "Producer id from server: %d\n", id);
     state = INITIALIZED;
     return id;
 }
