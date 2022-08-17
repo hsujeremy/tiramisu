@@ -1,7 +1,7 @@
 # Tiramisu
 
-Tiramisu is a lightweight event streaming platform designed for producers to
-easily stream records.
+Tiramisu is a lightweight event streaming engine that supports concurrent
+clients and ACID transactions while providing simple external API.
 
 Why is this system called Tiramisu? I guess it sounds cool and is one of my
 favorite desserts. And it also rhymes with my name!
