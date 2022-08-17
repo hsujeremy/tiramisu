@@ -2,12 +2,12 @@ BASE_DIR := $(shell pwd)
 DOCKER_CMD := docker
 
 build:
-	$(DOCKER_CMD) build -t streamer .
+	$(DOCKER_CMD) build -t tiramisu .
 
 startcontainer:
 	$(eval DOCKER_CONT_ID := $(shell $(DOCKER_CMD) container run \
-		-v $(BASE_DIR)/src:/streamer/src \
-		-d --rm -t --privileged -i streamer bash))
+		-v $(BASE_DIR):/tiramisu \
+		-d --rm -t --privileged -i tiramisu bash))
 	echo $(DOCKER_CONT_ID) > status.current_container_id
 
 runcontainer:

@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 FROM gcc:latest
 
-WORKDIR /streamer
+WORKDIR /tiramisu
 
 RUN bash -c 'apt-get update && apt-get install -y \
     apt-utils \
