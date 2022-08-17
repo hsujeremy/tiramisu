@@ -8,6 +8,10 @@ favorite desserts. And it also rhymes with my name!
 
 ## Design
 
+Similar to other streaming engines, Tiramisu serves a intermediate platform between producers that are sending streams of data and consumers that are reading and processing it.
+
+A producer sends over data interpreted by the system as transactions, where each transaction's start and end are set with explicit API calls. A transaction may contain one or more records.
+
 ### Handling Multiple Clients
 
 Unlike other implementations of servers that can scale to process multiple
