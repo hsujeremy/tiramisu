@@ -8,9 +8,11 @@ favorite desserts. And it also rhymes with my name!
 
 ## Design
 
-Similar to other streaming engines, Tiramisu serves a intermediate platform between producers that are sending streams of data and consumers that are reading and processing it.
+Similar to other streaming engines, Tiramisu serves a intermediate platform (known as a message broker) between producers that are sending streams of data and consumers that are reading and processing it.
 
 A producer sends over data interpreted by the system as transactions, where each transaction's start and end are set with explicit API calls. A transaction may contain one or more records.
+
+Data is stored in tables organized per-topic, where each topic is a string describing what the data refers to (e.g. "houses", "cars", "trips", etc.). Note that a table may contain records pushed from any number of producers. Furthermore, the Tiramisu broker stores only fully-completed transactions in its result tables, and only persists these result tables if the server shuts down. Before a transaction is marked as committed, intermediate records are stored in a per-producer table, also indexed by topic. 
 
 ### Handling Multiple Clients
 
