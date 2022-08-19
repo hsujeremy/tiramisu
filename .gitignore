@@ -38,3 +38,4 @@ status.current_container_id
 **server
 **producer_unix_socket
 **data
+**.deps
