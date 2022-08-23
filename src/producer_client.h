@@ -21,7 +21,7 @@ struct ProducerClient {
     //     Returns 0 on success and -1 otherwise.
     int connect_to_server();
 
-    // ProducerClient::make_request(request, response)
+    // ProducerClient::make_request(request)
     //     Makes request to server.
     //     Returns a nonnegative integer on success and -1 otherwise.
     int make_request(const std::string request);
@@ -42,7 +42,7 @@ struct ProducerClient {
     //     Returns 0 on success, -1 on server error, and -2 on client error.
     int begin_transaction();
 
-    // ProducerClient::send_record(data)
+    // ProducerClient::send_record(data, topic)
     //     Sends a record to the server as part of a transaction. Must be called
     //     in between calls to begin_transaction and either commit_transaction()
     //     or abort_transaction().

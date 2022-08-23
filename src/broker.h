@@ -53,7 +53,7 @@ struct Producer {
     //     Creates a new record table. Returns 0 on success and -1 otherwise.
     int begin_transaction();
 
-    // Producer::send_record()
+    // Producer::send_record(serialized_args)
     //     Creates a new row and performs a relational insert into the table.
     int send_record(std::string serialized_args);
 
@@ -62,7 +62,7 @@ struct Producer {
     //     disk beforehand.
     int abort_transaction();
 
-    // Producer::commit_transaction()
+    // Producer::commit_transaction(result_tables)
     //     Commits the transaction by writing it out to disk. Frees the table
     //     and sets `streaming` to false.
     int commit_transaction(TableMap& result_tables);
@@ -95,7 +95,7 @@ struct BrokerManager {
     //     Parses the request message and returns the correct action type.
     RequestedAction parse_request(const std::string request);
 
-    // BrokerManager::execute(client, action)
+    // BrokerManager::execute(client, sd, action, serialized_args)
     //     Executes the specified action for the specified client, passing in
     //     `serialized_args` if necessary.
     //     Returns a nonnegative integer on success and -1 otherwise.
