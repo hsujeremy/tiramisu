@@ -3,6 +3,7 @@
 
 #include <string>
 #include "common.h"
+#include "client.h"
 
 enum ProducerState {
     DISCONNECTED,       // Not connected to the server
@@ -10,7 +11,7 @@ enum ProducerState {
     INITIALIZED,        // Connected and initialized
 };
 
-struct ProducerClient {
+struct ProducerClient : Client {
     int id;
     int client_socket;
     ProducerState state = DISCONNECTED;
