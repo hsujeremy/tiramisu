@@ -10,6 +10,8 @@
 #define MAX_CONSUMERS 15
 #define MAX_CLIENTS 30
 
+struct BrokerManager;
+
 enum ClientType {
     PRODUCER,
     CONSUMER,
@@ -24,9 +26,12 @@ struct ClientMetadata {
 };
 
 struct Server {
+    BrokerManager* broker = nullptr;
     int server_socket = -1;
     int client_sockets[MAX_CLIENTS] = {0};
     std::unordered_map<size_t, ClientMetadata> sd_client_map;
+
+    void cleanup_client(const int idx);
 };
 
 enum RequestedAction {
@@ -116,6 +121,12 @@ struct BrokerManager {
     //     Returns a nonnegative integer on success and -1 otherwise.
     int execute(const int sd, RequestedAction action,
                 std::string serialized_args);
+
+    void deallocate_client(const ClientMetadata metadata);
+
+private:
+    void deallocate_producer(const int idx);
+    void deallocate_consumer(const int idx);
 };
 
 #endif

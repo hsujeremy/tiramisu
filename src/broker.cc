@@ -212,7 +212,49 @@ int BrokerManager::execute(const int sd, RequestedAction action,
     }
 }
 
+void BrokerManager::deallocate_producer(const int idx) {
+    Producer* exited = producers[idx];
+    producers[idx] = nullptr;
+    delete exited;
+}
+
+void BrokerManager::deallocate_consumer(const int idx) {
+    Consumer* exited = consumers[idx];
+    consumers[idx] = nullptr;
+    delete exited;
+}
+
+void BrokerManager::deallocate_client(const ClientMetadata metadata) {
+    switch (metadata.type) {
+        case PRODUCER:
+            deallocate_producer(metadata.idx);
+            break;
+
+        case CONSUMER:
+            deallocate_consumer(metadata.idx);
+            break;
+
+        default:
+            break;
+    }
+}
+
 BrokerManager::~BrokerManager() {
     result_tables.flush_tables();
     result_tables.free_tables();
+}
+
+// -----------------------------------------------------------------------------
+// Server implementation
+
+void Server::cleanup_client(const int idx) {
+    const int sd = client_sockets[idx];
+    if (!sd_client_map.count(sd)) {
+        dbg_printf(DBG, "Socket not found in map\n");
+        return;
+    }
+    ClientMetadata metadata = sd_client_map.at(sd);
+    broker->deallocate_client(metadata);
+    sd_client_map.erase(sd);
+    client_sockets[idx] = 0;
 }

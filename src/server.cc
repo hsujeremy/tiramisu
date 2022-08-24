@@ -25,6 +25,7 @@ int main() {
     broker = new BrokerManager();
     Server* server = new Server();
     broker->server = server;
+    server->broker = broker;
 
     char buf[1024];
 
@@ -141,19 +142,7 @@ int main() {
                         dbg_printf(DBG, "Host disconnected with IP %s and port %d\n",
                             inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
                         close(sd);
-                        if (server->sd_client_map.count(sd)) {
-                            // TODO: Distinguish between types
-                            ClientMetadata metadata =
-                                server->sd_client_map.at(sd);
-                            Producer* exited_prod =
-                                broker->producers[metadata.idx];
-                            dbg_printf(DBG, "Exited producer with id %d\n",
-                                       exited_prod->id);
-                            server->sd_client_map.erase(sd);
-                            server->client_sockets[i] = 0;
-                            broker->producers[exited_prod->id] = nullptr;
-                            delete exited_prod;
-                        }
+                        server->cleanup_client(i);
                     } else {
                         // Echo back the incoming message
                         buf[nread] = '\0';
