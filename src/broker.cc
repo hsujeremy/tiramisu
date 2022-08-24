@@ -109,6 +109,9 @@ int Producer::commit_transaction(TableMap& result_tables) {
 Consumer::Consumer(const int consumer_sock, const int consumer_id) {
     id = consumer_id;
     sock = consumer_sock;
+int Consumer::subscribe(const std::string topic) {
+    subscriptions.insert(topic);
+    return 0;
 }
 
 // -----------------------------------------------------------------------------
@@ -129,6 +132,8 @@ RequestedAction BrokerManager::parse_request(const std::string request) {
         return ABORT_TRANSACTION;
     } else if (request.compare("commit_transaction") == 0) {
         return COMMIT_TRANSACTION;
+    } else if (request.compare(0, 9, "subscribe") == 0) {
+        return SUBSCRIBE;
     }
     return UNKNOWN_ACTION;
 }

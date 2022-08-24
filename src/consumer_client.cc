@@ -19,3 +19,8 @@ int ConsumerClient::init() {
     state = INITIALIZED;
     return id;
 }
+
+int ConsumerClient::subscribe(const std::string topic) {
+    std::string request = "subscribe," + topic;
+    return make_request(request);
+}

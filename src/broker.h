@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include "common.h"
 #include "storage.h"
 
@@ -41,6 +42,7 @@ enum RequestedAction {
     SEND_RECORD,
     ABORT_TRANSACTION,
     COMMIT_TRANSACTION,
+    SUBSCRIBE,
     UNKNOWN_ACTION,
 };
 
@@ -94,10 +96,11 @@ private:
 struct Consumer {
     int id;
     int sock;
+    std::unordered_set<std::string> subscriptions;
 
     Consumer(const int consumer_sock, const int consumer_id);
-    void subscribe();
-    void unsubscribe();
+    int subscribe(const std::string topic);
+    int unsubscribe(const std::string topic);
 };
 
 struct BrokerManager {

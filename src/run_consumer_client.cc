@@ -9,6 +9,7 @@ int main() {
     }
 
     consumer->init();
+    consumer->subscribe("general");
 
     delete consumer;
     return 0;
