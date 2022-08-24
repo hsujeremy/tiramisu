@@ -12,8 +12,6 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 
-#define MAX_CLIENTS 30
-
 BrokerManager* broker = nullptr;
 volatile sig_atomic_t terminate = 0;
 
@@ -22,11 +20,12 @@ void handler(int signum) {
 }
 
 int main() {
+    assert(MAX_PRODUCERS + MAX_CONSUMERS == MAX_CLIENTS);
+    
     broker = new BrokerManager();
     Server* server = new Server();
     broker->server = server;
 
-    int client_sockets[MAX_CLIENTS] = {0};
     char buf[1024];
 
     // Set of socket descriptors
@@ -80,7 +79,7 @@ int main() {
 
         // Add child sockets to set
         for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-            int sd = client_sockets[i];
+            int sd = server->client_sockets[i];
             if (sd > 0) {
                 FD_SET(sd, &readfds);
             }
@@ -118,15 +117,15 @@ int main() {
 
             // Add new socket to socket array
             for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-                if (!client_sockets[i]) {
-                    client_sockets[i] = new_socket;
+                if (!server->client_sockets[i]) {
+                    server->client_sockets[i] = new_socket;
                     break;
                 }
             }
         } else {
             // Handle IO operation on some other socket
             for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-                int sd = client_sockets[i];
+                int sd = server->client_sockets[i];
                 if (FD_ISSET(sd, &readfds)) {
                     ssize_t nread = read(sd, buf, 1024);
                     if (!nread) {
@@ -141,7 +140,7 @@ int main() {
                             broker->producers[server->sd_producer_map.at(sd)];
                         dbg_printf(DBG, "Exited producer with id %d\n", exited_prod->id);
                         server->sd_producer_map.erase(sd);
-                        client_sockets[i] = 0;
+                        server->client_sockets[i] = 0;
                         broker->producers[exited_prod->id] = nullptr;
                         delete exited_prod;
                     } else {

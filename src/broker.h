@@ -8,6 +8,7 @@
 
 #define MAX_PRODUCERS 15
 #define MAX_CONSUMERS 15
+#define MAX_CLIENTS 30
 
 enum ClientType {
     PRODUCER,
@@ -16,6 +17,7 @@ enum ClientType {
 
 struct Server {
     int server_socket = -1;
+    int client_sockets[MAX_CLIENTS] = {0};
     std::unordered_map<size_t, size_t> sd_producer_map;
     std::unordered_map<size_t, size_t> sd_consumer_map;
 };
