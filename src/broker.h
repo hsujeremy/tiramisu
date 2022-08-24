@@ -25,9 +25,8 @@ struct ClientMetadata {
 
 struct Server {
     int server_socket = -1;
-    ClientMetadata client_sockets[MAX_CLIENTS];
-    std::unordered_map<size_t, size_t> sd_producer_map;
-    std::unordered_map<size_t, size_t> sd_consumer_map;
+    int client_sockets[MAX_CLIENTS] = {0};
+    std::unordered_map<size_t, ClientMetadata> sd_client_map;
 };
 
 enum RequestedAction {
