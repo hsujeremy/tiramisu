@@ -17,6 +17,7 @@ enum ClientType {
 struct Server {
     int server_socket = -1;
     std::unordered_map<size_t, size_t> sd_producer_map;
+    std::unordered_map<size_t, size_t> sd_consumer_map;
 };
 
 enum RequestedAction {
@@ -44,7 +45,7 @@ struct Producer {
     bool streaming = false;
     std::vector<int> subscribers;
 
-    Producer(const int client_socket, const int producer_id);
+    Producer(const int producer_sock, const int producer_id);
 
     // Producer::init_transactions()
     //     Return the transactional ID.
@@ -78,8 +79,9 @@ private:
 
 struct Consumer {
     int id;
+    int sock;
 
-    Consumer(const int consumer_id);
+    Consumer(const int consumer_sock, const int consumer_id);
     void subscribe();
     void unsubscribe();
 };
@@ -97,6 +99,7 @@ struct BrokerManager {
     RequestedAction parse_request(const std::string request);
 
     int init_producer(const int sd);
+    int init_consumer(const int sd);
 
     // BrokerManager::execute(client, sd, action, serialized_args)
     //     Executes the specified action for the specified client, passing in

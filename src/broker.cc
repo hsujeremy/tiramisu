@@ -104,6 +104,14 @@ int Producer::commit_transaction(TableMap& result_tables) {
 }
 
 // -----------------------------------------------------------------------------
+// Consumer implementation
+
+Consumer::Consumer(const int consumer_sock, const int consumer_id) {
+    id = consumer_id;
+    sock = consumer_sock;
+}
+
+// -----------------------------------------------------------------------------
 // BrokerManager implementation
 
 RequestedAction BrokerManager::parse_request(const std::string request) {
@@ -111,6 +119,8 @@ RequestedAction BrokerManager::parse_request(const std::string request) {
     // Parse the string and return the request
     if (request.compare("init_producer") == 0) {
         return INIT_PRODUCER;
+    } else if (request.compare("init_consumer") == 0) {
+        return INIT_CONSUMER;
     } else if (request.compare("begin_transaction") == 0) {
         return BEGIN_TRANSACTION;
     } else if (request.compare(0, 11, "send_record") == 0) {
@@ -137,6 +147,20 @@ int BrokerManager::init_producer(const int sd) {
     return idx;
 }
 
+int BrokerManager::init_consumer(const int sd) {
+    int idx = -1;
+    for (int i = 0; i < MAX_CONSUMERS; ++i) {
+        if (!consumers[i]) {
+            idx = i;
+            consumers[i] = new Consumer(sd, idx);
+            server->sd_consumer_map.insert(std::make_pair(sd, idx));
+            dbg_printf(DBG, "Created consumer with id %d\n", idx);
+            break;
+        }
+    }
+    return idx;
+}
+
 int BrokerManager::execute(ClientType client_type, const int sd,
                            RequestedAction action,
                            std::string serialized_args) {
@@ -146,6 +170,8 @@ int BrokerManager::execute(ClientType client_type, const int sd,
 
     if (action == INIT_PRODUCER) {
         return init_producer(sd);
+    } else if (action == INIT_CONSUMER) {
+        return init_consumer(sd);
     }
 
     if (!server->sd_producer_map.count(sd)) {

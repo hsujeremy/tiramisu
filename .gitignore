@@ -35,6 +35,7 @@
 .vscode
 status.current_container_id
 **run_producer_client
+**run_consumer_client
 **server
 **producer_unix_socket
 **data

@@ -1,7 +1,7 @@
 CC = g++ -std=c++14
 override CFLAGS += -Wall -W -Wshadow -Wno-format -Wno-unused-parameter
 
-all: server run_producer_client
+all: server run_producer_client run_consumer_client
 
 ####### Automatic dependency magic #######
 DEPSDIR := .deps
@@ -30,5 +30,8 @@ server: server.o broker.o storage.o common.o
 run_producer_client: run_producer_client.o client.o producer_client.o common.o
 	$(CC) $(CFLAGS) $(DEPCFLAGS) -o $@ $^
 
+run_consumer_client: run_consumer_client.o client.o consumer_client.o common.o
+	$(CC) $(CFLAGS) $(DEPCFLAGS) -o $@ $^
+
 clean:
-	rm -f *.o server run_producer_client
+	rm -f *.o server run_producer_client run_consumer_client
