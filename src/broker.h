@@ -16,7 +16,7 @@ enum ClientType {
 
 struct Server {
     int server_socket = -1;
-    std::unordered_map<size_t, size_t> sd_client_map;
+    std::unordered_map<size_t, size_t> sd_producer_map;
 };
 
 enum RequestedAction {

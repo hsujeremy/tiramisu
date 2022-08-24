@@ -129,7 +129,7 @@ int BrokerManager::init_producer(const int sd) {
         if (!producers[i]) {
             idx = i;
             producers[i] = new Producer(sd, idx);
-            server->sd_client_map.insert(std::make_pair(sd, idx));
+            server->sd_producer_map.insert(std::make_pair(sd, idx));
             dbg_printf(DBG, "Created producer with id %d\n", idx);
             break;
         }
@@ -148,11 +148,11 @@ int BrokerManager::execute(ClientType client_type, const int sd,
         return init_producer(sd);
     }
 
-    if (!server->sd_client_map.count(sd)) {
+    if (!server->sd_producer_map.count(sd)) {
         perror("Socket descriptor not found in map!\n");
         return -1;
     }
-    Producer* producer = producers[server->sd_client_map.at(sd)];
+    Producer* producer = producers[server->sd_producer_map.at(sd)];
     assert(producer);
 
     int result = 0;

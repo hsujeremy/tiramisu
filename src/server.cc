@@ -138,9 +138,9 @@ int main() {
                             inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
                         close(sd);
                         Producer* exited_prod =
-                            broker->producers[server->sd_client_map.at(sd)];
+                            broker->producers[server->sd_producer_map.at(sd)];
                         dbg_printf(DBG, "Exited producer with id %d\n", exited_prod->id);
-                        server->sd_client_map.erase(sd);
+                        server->sd_producer_map.erase(sd);
                         client_sockets[i] = 0;
                         broker->producers[exited_prod->id] = nullptr;
                         delete exited_prod;
