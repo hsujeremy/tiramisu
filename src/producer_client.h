@@ -5,25 +5,8 @@
 #include "common.h"
 #include "client.h"
 
-enum ProducerState {
-    DISCONNECTED,       // Not connected to the server
-    UNINITIALIZED,      // Connected but uninitialized
-    INITIALIZED,        // Connected and initialized
-};
-
 struct ProducerClient : Client {
     int id;
-    ProducerState state = DISCONNECTED;
-
-    // ProducerClient::connect_to_server()
-    //     Attempts to connect to the server and sets the client_socket number
-    //     if connected. Sets the producer state to UNITIALIZED.
-    //     Returns 0 on success and -1 otherwise.
-    int connect_to_server();
-
-    // ProducerClient::close_connection()
-    //     Closes the connection the server.
-    void close_connection();
 
     // ProducerClient::init_transactions()
     //     Gets the transactional ID for this producer back from the server and

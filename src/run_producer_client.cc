@@ -21,9 +21,7 @@ int main() {
         prod->send_record(i);
     }
     prod->commit_transaction();
-    prod->close_producer();
-
-    close(prod->client_socket);
+    prod->disconnect_from_server();
 
     delete prod;
     return 0;
