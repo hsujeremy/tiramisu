@@ -27,7 +27,7 @@ $(DEPSDIR)/stamp $(BUILDSTAMP):
 server: server.o broker.o storage.o common.o
 	$(CC) $(CFLAGS) $(DEPCFLAGS) -o $@ $^
 
-run_producer_client: run_producer_client.o producer_client.o common.o
+run_producer_client: run_producer_client.o client.o producer_client.o common.o
 	$(CC) $(CFLAGS) $(DEPCFLAGS) -o $@ $^
 
 clean:

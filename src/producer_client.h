@@ -13,7 +13,6 @@ enum ProducerState {
 
 struct ProducerClient : Client {
     int id;
-    int client_socket;
     ProducerState state = DISCONNECTED;
 
     // ProducerClient::connect_to_server()
@@ -21,11 +20,6 @@ struct ProducerClient : Client {
     //     if connected. Sets the producer state to UNITIALIZED.
     //     Returns 0 on success and -1 otherwise.
     int connect_to_server();
-
-    // ProducerClient::make_request(request)
-    //     Makes request to server.
-    //     Returns a nonnegative integer on success and -1 otherwise.
-    int make_request(const std::string request);
 
     // ProducerClient::close_connection()
     //     Closes the connection the server.
