@@ -112,12 +112,47 @@ Consumer::Consumer(const int consumer_sock, const int consumer_id) {
     ts_offset = std::time(nullptr);
 }
 
-int Consumer::subscribe(const std::string topic) {
-    if (!subscriptions.count(topic)) {
-        dbg_printf("Topic %s not found!\n", topic.c_str());
+int Consumer::subscribe(TableMap& result_tables, std::string serialized_args) {
+    // Split serialized request into arguments
+    std::vector<std::string> substrings;
+    std::stringstream sstream(serialized_args);
+    while (sstream.good()) {
+        std::string substring;
+        std::getline(sstream, substring, ',');
+        substrings.push_back(substring);
+    }
+
+    // Process arguments
+    assert(substrings.size() == 2 && substrings[0].compare("subscribe") == 0);
+    std::string topic = substrings[1];
+
+    if (!result_tables.map.count(topic)) {
+        dbg_printf(DBG, "Topic \"%s\" not found!\n", topic.c_str());
         return -1;
     }
     subscriptions.insert(topic);
+    return 0;
+}
+
+int Consumer::unsubscribe(std::string serialized_args) {
+    // Split serialized request into arguments
+    std::vector<std::string> substrings;
+    std::stringstream sstream(serialized_args);
+    while (sstream.good()) {
+        std::string substring;
+        std::getline(sstream, substring, ',');
+        substrings.push_back(substring);
+    }
+
+    // Process arguments
+    assert(substrings.size() == 2 && substrings[0].compare("unsubscribe") == 0);
+    std::string topic = substrings[1];
+
+    if (!subscriptions.count(topic)) {
+        dbg_printf("Topic \"%s\" not found!\n", topic.c_str());
+        return -1;
+    }
+    subscriptions.erase(topic);
     return 0;
 }
 
@@ -125,7 +160,7 @@ int Consumer::subscribe(const std::string topic) {
 // BrokerManager implementation
 
 RequestedAction BrokerManager::parse_request(const std::string request) {
-    dbg_printf(DBG, "client request: %s\n", request.c_str());
+    dbg_printf(DBG, "Client request: %s\n", request.c_str());
     // Parse the string and return the request
     if (request.compare("init_producer") == 0) {
         return INIT_PRODUCER;
@@ -141,6 +176,8 @@ RequestedAction BrokerManager::parse_request(const std::string request) {
         return COMMIT_TRANSACTION;
     } else if (request.compare(0, 9, "subscribe") == 0) {
         return SUBSCRIBE;
+    } else if (request.compare(0, 11, "unsubscribe") == 0) {
+        return UNSUBSCRIBE;
     }
     return UNKNOWN_ACTION;
 }
@@ -190,7 +227,8 @@ int BrokerManager::execute(const int sd, RequestedAction action,
         return -1;
     }
     ClientMetadata metadata = server->sd_client_map.at(sd);
-    // TODO: Distinguish between client types
+
+    int result = 0;
     if (metadata.type == PRODUCER) {
         Producer* producer = producers[metadata.idx];
         assert(producer);
@@ -214,14 +252,28 @@ int BrokerManager::execute(const int sd, RequestedAction action,
                 break;
 
             case UNKNOWN_ACTION:
-                result = 0;
                 break;
         }
-        dbg_printf(DBG, "result from server: %d\n", result);
-        return result;
     } else {
-        return 0;
+        Consumer* consumer = consumers[metadata.idx];
+        assert(consumer);
+
+        int result = 0;
+        switch (action) {
+            case SUBSCRIBE:
+                result = consumer->subscribe(result_tables, serialized_args);
+                break;
+
+            case UNSUBSCRIBE:
+                result = consumer->unsubscribe(serialized_args);
+                break;
+
+            default:
+                break;
+        }
     }
+    dbg_printf(DBG, "Result from server: %d\n", result);
+    return result;
 }
 
 void BrokerManager::deallocate_producer(const int idx) {

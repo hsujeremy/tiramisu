@@ -44,6 +44,7 @@ enum RequestedAction {
     ABORT_TRANSACTION,
     COMMIT_TRANSACTION,
     SUBSCRIBE,
+    UNSUBSCRIBE,
     UNKNOWN_ACTION,
 };
 
@@ -101,8 +102,8 @@ struct Consumer {
     std::unordered_set<std::string> subscriptions;
 
     Consumer(const int consumer_sock, const int consumer_id);
-    int subscribe(const std::string topic);
-    int unsubscribe(const std::string topic);
+    int subscribe(TableMap& result_tables, std::string serialized_args);
+    int unsubscribe(std::string serialized_args);
 };
 
 struct BrokerManager {

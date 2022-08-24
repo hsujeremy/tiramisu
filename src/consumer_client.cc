@@ -24,3 +24,8 @@ int ConsumerClient::subscribe(const std::string topic) {
     std::string request = "subscribe," + topic;
     return make_request(request);
 }
+
+int ConsumerClient::unsubscribe(const std::string topic) {
+    std::string request = "unsubscribe," + topic;
+    return make_request(request);
+}

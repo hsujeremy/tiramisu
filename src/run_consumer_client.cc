@@ -10,6 +10,7 @@ int main() {
 
     consumer->init();
     consumer->subscribe("general");
+    consumer->unsubscribe("general");
 
     delete consumer;
     return 0;
