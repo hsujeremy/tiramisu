@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 
 
-int ProducerClient::init_transactions() {
+int ProducerClient::init_producer() {
     if (client_socket < 0 || state == DISCONNECTED) {
         dbg_printf(DBG, "Client not connected to server\n");
         return -1;
@@ -19,7 +19,7 @@ int ProducerClient::init_transactions() {
     // Assume for now that there this function is not called twice
     assert(state == UNINITIALIZED);
 
-    id = make_request("init_transactions");
+    id = make_request("init_producer");
     if (id < 0) {
         dbg_printf(DBG, "Error getting the transactional ID!\n");
         return -1;

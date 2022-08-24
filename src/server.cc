@@ -110,20 +110,7 @@ int main() {
             }
 
             dbg_printf(DBG, "New connection with socket fd %d, IP %s, and port number %d\n",
-                    new_socket, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
-
-            // Create Producer by default for now
-            int prod_idx = -1;
-            for (int i = 0; i < MAX_PRODUCERS; ++i) {
-                if (!broker->producers[i]) {
-                    prod_idx = i;
-                    // Set index in table to be the producer id
-                    broker->producers[i] = new Producer(new_socket, prod_idx);
-                    server->sd_client_map.insert(std::make_pair(new_socket, i));
-                    dbg_printf(DBG, "Created producer with id %d\n", prod_idx);
-                    break;
-                }
-            }
+                       new_socket, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
             if (send(new_socket, message.c_str(), message.length(), 0) < 0) {
                 perror("Error sending connection message\n");

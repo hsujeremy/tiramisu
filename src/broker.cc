@@ -42,10 +42,6 @@ Producer::Producer(const int client_socket, const int producer_id) {
     sock = client_socket;
 }
 
-int Producer::init_transactions() {
-    return id;
-}
-
 int Producer::begin_transaction() {
     if (streaming) {
         perror("Streaming already in progress!\n");
@@ -113,8 +109,8 @@ int Producer::commit_transaction(TableMap& result_tables) {
 RequestedAction BrokerManager::parse_request(const std::string request) {
     dbg_printf(DBG, "client request: %s\n", request.c_str());
     // Parse the string and return the request
-    if (request.compare("init_transactions") == 0) {
-        return INIT_TRANSACTIONS;
+    if (request.compare("init_producer") == 0) {
+        return INIT_PRODUCER;
     } else if (request.compare("begin_transaction") == 0) {
         return BEGIN_TRANSACTION;
     } else if (request.compare(0, 11, "send_record") == 0) {
@@ -127,12 +123,30 @@ RequestedAction BrokerManager::parse_request(const std::string request) {
     return UNKNOWN_ACTION;
 }
 
+int BrokerManager::init_producer(const int sd) {
+    int idx = -1;
+    for (int i = 0; i < MAX_PRODUCERS; ++i) {
+        if (!producers[i]) {
+            idx = i;
+            producers[i] = new Producer(sd, idx);
+            server->sd_client_map.insert(std::make_pair(sd, idx));
+            dbg_printf(DBG, "Created producer with id %d\n", idx);
+            break;
+        }
+    }
+    return idx;
+}
+
 int BrokerManager::execute(ClientType client_type, const int sd,
                            RequestedAction action,
                            std::string serialized_args) {
     // No need to distinguish between client types now since consumer-side is
     // not implemented
     (void)client_type;
+
+    if (action == INIT_PRODUCER) {
+        return init_producer(sd);
+    }
 
     if (!server->sd_client_map.count(sd)) {
         perror("Socket descriptor not found in map!\n");
@@ -143,8 +157,7 @@ int BrokerManager::execute(ClientType client_type, const int sd,
 
     int result = 0;
     switch (action) {
-        case INIT_TRANSACTIONS:
-            result = producer->init_transactions();
+        case INIT_CONSUMER:
             break;
 
         case BEGIN_TRANSACTION:

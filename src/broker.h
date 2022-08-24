@@ -20,7 +20,8 @@ struct Server {
 };
 
 enum RequestedAction {
-    INIT_TRANSACTIONS,
+    INIT_PRODUCER,
+    INIT_CONSUMER,
     BEGIN_TRANSACTION,
     SEND_RECORD,
     ABORT_TRANSACTION,
@@ -94,6 +95,8 @@ struct BrokerManager {
     // BrokerManager::parse_request(request)
     //     Parses the request message and returns the correct action type.
     RequestedAction parse_request(const std::string request);
+
+    int init_producer(const int sd);
 
     // BrokerManager::execute(client, sd, action, serialized_args)
     //     Executes the specified action for the specified client, passing in

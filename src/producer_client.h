@@ -8,11 +8,11 @@
 struct ProducerClient : Client {
     int id;
 
-    // ProducerClient::init_transactions()
+    // ProducerClient::init_producer()
     //     Gets the transactional ID for this producer back from the server and
     //     sets the state of the producer client accordingly.
     //     Returns the transactional ID on success and -1 otherwise.
-    int init_transactions();
+    int init_producer();
 
     // ProducerClient::begin_transaction()
     //     Marks the beginning of a transaction and thus should be called before
@@ -39,7 +39,7 @@ struct ProducerClient : Client {
 
     // ProducerClient::close_producer()
     //     Changes the state back to UNINITIALIZED. Must call
-    //     `init_transactions()` again before making any further transactions.
+    //     `init_producer()` again before making any further transactions.
     //     Returns 0 on success, -1 on server error, and -2 on client error.
     int close_producer();
 };
