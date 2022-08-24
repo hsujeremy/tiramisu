@@ -110,11 +110,11 @@ struct BrokerManager {
     int init_producer(const int sd);
     int init_consumer(const int sd);
 
-    // BrokerManager::execute(client, sd, action, serialized_args)
+    // BrokerManager::execute(sd, action, serialized_args)
     //     Executes the specified action for the specified client, passing in
     //     `serialized_args` if necessary.
     //     Returns a nonnegative integer on success and -1 otherwise.
-    int execute(ClientType client, const int sd, RequestedAction action,
+    int execute(const int sd, RequestedAction action,
                 std::string serialized_args);
 };
 

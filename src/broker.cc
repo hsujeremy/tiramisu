@@ -165,13 +165,8 @@ int BrokerManager::init_consumer(const int sd) {
     return idx;
 }
 
-int BrokerManager::execute(ClientType client_type, const int sd,
-                           RequestedAction action,
+int BrokerManager::execute(const int sd, RequestedAction action,
                            std::string serialized_args) {
-    // No need to distinguish between client types now since consumer-side is
-    // not implemented
-    (void)client_type;
-
     if (action == INIT_PRODUCER) {
         return init_producer(sd);
     } else if (action == INIT_CONSUMER) {
@@ -183,6 +178,7 @@ int BrokerManager::execute(ClientType client_type, const int sd,
         return -1;
     }
     ClientMetadata metadata = server->sd_client_map.at(sd);
+    // TODO: Distinguish between client types
     assert(metadata.type == PRODUCER);
     Producer* producer = producers[metadata.idx];
     assert(producer);

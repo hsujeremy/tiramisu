@@ -160,9 +160,7 @@ int main() {
                         dbg_printf(DBG, "From client: %s\n", buf);
                         std::string request(buf);
                         RequestedAction action = broker->parse_request(request);
-
-                        int result =
-                            broker->execute(PRODUCER, sd, action, request);
+                        int result = broker->execute(sd, action, request);
                         std::string serialized_result = std::to_string(result);
                         send(sd, serialized_result.c_str(),
                              serialized_result.length(), 0);
