@@ -5,6 +5,9 @@
 #include "broker.h"
 #include "common.h"
 
+// -----------------------------------------------------------------------------
+// TableMap implementation
+
 Table* TableMap::find_or_create_table(const std::string topic) {
     if (!map.count(topic)) {
         Table* new_table = new Table(topic);
@@ -31,26 +34,12 @@ void TableMap::free_tables() {
     }
 }
 
+// -----------------------------------------------------------------------------
+// Producer implementation
+
 Producer::Producer(const int client_socket, const int producer_id) {
     id = producer_id;
     sock = client_socket;
-}
-
-RequestedAction BrokerManager::parse_request(const std::string request) {
-    dbg_printf(DBG, "client request: %s\n", request.c_str());
-    // Parse the string and return the request
-    if (request.compare("init_transactions") == 0) {
-        return INIT_TRANSACTIONS;
-    } else if (request.compare("begin_transaction") == 0) {
-        return BEGIN_TRANSACTION;
-    } else if (request.compare(0, 11, "send_record") == 0) {
-        return SEND_RECORD;
-    } else if (request.compare("abort_transaction") == 0) {
-        return ABORT_TRANSACTION;
-    } else if (request.compare("commit_transaction") == 0) {
-        return COMMIT_TRANSACTION;
-    }
-    return UNKNOWN_ACTION;
 }
 
 int Producer::init_transactions() {
@@ -118,9 +107,24 @@ int Producer::commit_transaction(TableMap& result_tables) {
     return cleanup_transaction();
 }
 
-BrokerManager::~BrokerManager() {
-    result_tables.flush_tables();
-    result_tables.free_tables();
+// -----------------------------------------------------------------------------
+// BrokerManager implementation
+
+RequestedAction BrokerManager::parse_request(const std::string request) {
+    dbg_printf(DBG, "client request: %s\n", request.c_str());
+    // Parse the string and return the request
+    if (request.compare("init_transactions") == 0) {
+        return INIT_TRANSACTIONS;
+    } else if (request.compare("begin_transaction") == 0) {
+        return BEGIN_TRANSACTION;
+    } else if (request.compare(0, 11, "send_record") == 0) {
+        return SEND_RECORD;
+    } else if (request.compare("abort_transaction") == 0) {
+        return ABORT_TRANSACTION;
+    } else if (request.compare("commit_transaction") == 0) {
+        return COMMIT_TRANSACTION;
+    }
+    return UNKNOWN_ACTION;
 }
 
 int BrokerManager::execute(ClientType client_type, const int sd,
@@ -165,4 +169,9 @@ int BrokerManager::execute(ClientType client_type, const int sd,
     }
     dbg_printf(DBG, "result from server: %d\n", result);
     return result;
+}
+
+BrokerManager::~BrokerManager() {
+    result_tables.flush_tables();
+    result_tables.free_tables();
 }
