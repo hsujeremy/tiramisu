@@ -19,6 +19,8 @@ struct Client {
     //     Returns 0 on success and -1 otherwise.
     int connect_to_server();
 
+    virtual int init() = 0;
+
     // Client::make_request(request)
     //     Makes request to server. Expects a serialized int in response.
     //     Returns a nonnegative integer on success and -1 otherwise.

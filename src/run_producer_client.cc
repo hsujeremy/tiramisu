@@ -15,7 +15,7 @@ int main() {
         return -1;
     }
 
-    prod->init_producer();
+    prod->init();
     prod->begin_transaction();
     for (size_t i = 0; i < 10; ++i) {
         prod->send_record(i);

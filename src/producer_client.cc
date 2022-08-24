@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 
 
-int ProducerClient::init_producer() {
+int ProducerClient::init() {
     if (client_socket < 0 || state == DISCONNECTED) {
         dbg_printf(DBG, "Client not connected to server\n");
         return -1;
