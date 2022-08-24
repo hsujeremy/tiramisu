@@ -120,6 +120,7 @@ int main() {
                 if (!server->client_sockets[i].filled) {
                     server->client_sockets[i].filled = true;
                     server->client_sockets[i].sock = new_socket;
+                    server->client_sockets[i].type = UNSPECIFIED;
                     break;
                 }
             }
