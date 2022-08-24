@@ -185,9 +185,6 @@ int BrokerManager::execute(const int sd, RequestedAction action,
 
     int result = 0;
     switch (action) {
-        case INIT_CONSUMER:
-            break;
-
         case BEGIN_TRANSACTION:
             result = producer->begin_transaction();
             break;
