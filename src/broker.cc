@@ -52,16 +52,7 @@ int Producer::begin_transaction() {
 }
 
 int Producer::send_record(std::string serialized_args) {
-    // Split serialized request into arguments
-    std::vector<std::string> substrings;
-    std::stringstream sstream(serialized_args);
-    while (sstream.good()) {
-        std::string substring;
-        std::getline(sstream, substring, ',');
-        substrings.push_back(substring);
-    }
-
-    // Convert data and event_time parameters back to their original types
+    std::vector<std::string> substrings = split_strings(serialized_args, ',');
     assert(substrings.size() == 4 && substrings[0].compare("send_record") == 0);
     std::string topic = substrings[1];
     int data = std::stoi(substrings[2]);
@@ -113,16 +104,7 @@ Consumer::Consumer(const int consumer_sock, const int consumer_id) {
 }
 
 int Consumer::subscribe(TableMap& result_tables, std::string serialized_args) {
-    // Split serialized request into arguments
-    std::vector<std::string> substrings;
-    std::stringstream sstream(serialized_args);
-    while (sstream.good()) {
-        std::string substring;
-        std::getline(sstream, substring, ',');
-        substrings.push_back(substring);
-    }
-
-    // Process arguments
+    std::vector<std::string> substrings = split_strings(serialized_args, ',');
     assert(substrings.size() == 2 && substrings[0].compare("subscribe") == 0);
     std::string topic = substrings[1];
 
@@ -135,16 +117,7 @@ int Consumer::subscribe(TableMap& result_tables, std::string serialized_args) {
 }
 
 int Consumer::unsubscribe(std::string serialized_args) {
-    // Split serialized request into arguments
-    std::vector<std::string> substrings;
-    std::stringstream sstream(serialized_args);
-    while (sstream.good()) {
-        std::string substring;
-        std::getline(sstream, substring, ',');
-        substrings.push_back(substring);
-    }
-
-    // Process arguments
+    std::vector<std::string> substrings = split_strings(serialized_args, ',');
     assert(substrings.size() == 2 && substrings[0].compare("unsubscribe") == 0);
     std::string topic = substrings[1];
 
