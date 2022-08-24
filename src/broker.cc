@@ -113,6 +113,10 @@ Consumer::Consumer(const int consumer_sock, const int consumer_id) {
 }
 
 int Consumer::subscribe(const std::string topic) {
+    if (!subscriptions.count(topic)) {
+        dbg_printf("Topic %s not found!\n", topic.c_str());
+        return -1;
+    }
     subscriptions.insert(topic);
     return 0;
 }
