@@ -1,6 +1,7 @@
 #ifndef BROKER_H
 #define BROKER_H
 
+#include <ctime>
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
@@ -96,6 +97,7 @@ private:
 struct Consumer {
     int id;
     int sock;
+    std::time_t ts_offset;
     std::unordered_set<std::string> subscriptions;
 
     Consumer(const int consumer_sock, const int consumer_id);

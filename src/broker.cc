@@ -109,6 +109,9 @@ int Producer::commit_transaction(TableMap& result_tables) {
 Consumer::Consumer(const int consumer_sock, const int consumer_id) {
     id = consumer_id;
     sock = consumer_sock;
+    ts_offset = std::time(nullptr);
+}
+
 int Consumer::subscribe(const std::string topic) {
     subscriptions.insert(topic);
     return 0;
