@@ -13,11 +13,19 @@
 enum ClientType {
     PRODUCER,
     CONSUMER,
+    UNSPECIFIED,
+};
+
+struct ClientMetadata {
+    bool filled = false;
+    int sock = 0;
+    int idx = -1;
+    ClientType type = UNSPECIFIED;
 };
 
 struct Server {
     int server_socket = -1;
-    int client_sockets[MAX_CLIENTS] = {0};
+    ClientMetadata client_sockets[MAX_CLIENTS];
     std::unordered_map<size_t, size_t> sd_producer_map;
     std::unordered_map<size_t, size_t> sd_consumer_map;
 };

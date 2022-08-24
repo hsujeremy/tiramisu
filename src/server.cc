@@ -21,7 +21,7 @@ void handler(int signum) {
 
 int main() {
     assert(MAX_PRODUCERS + MAX_CONSUMERS == MAX_CLIENTS);
-    
+
     broker = new BrokerManager();
     Server* server = new Server();
     broker->server = server;
@@ -79,7 +79,7 @@ int main() {
 
         // Add child sockets to set
         for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-            int sd = server->client_sockets[i];
+            int sd = server->client_sockets[i].sock;
             if (sd > 0) {
                 FD_SET(sd, &readfds);
             }
@@ -117,15 +117,16 @@ int main() {
 
             // Add new socket to socket array
             for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-                if (!server->client_sockets[i]) {
-                    server->client_sockets[i] = new_socket;
+                if (!server->client_sockets[i].filled) {
+                    server->client_sockets[i].filled = true;
+                    server->client_sockets[i].sock = new_socket;
                     break;
                 }
             }
         } else {
             // Handle IO operation on some other socket
             for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-                int sd = server->client_sockets[i];
+                int sd = server->client_sockets[i].sock;
                 if (FD_ISSET(sd, &readfds)) {
                     ssize_t nread = read(sd, buf, 1024);
                     if (!nread) {
@@ -140,7 +141,9 @@ int main() {
                             broker->producers[server->sd_producer_map.at(sd)];
                         dbg_printf(DBG, "Exited producer with id %d\n", exited_prod->id);
                         server->sd_producer_map.erase(sd);
-                        server->client_sockets[i] = 0;
+                        server->client_sockets[i].filled = false;
+                        server->client_sockets[i].sock = 0;
+                        server->client_sockets[i].type = UNSPECIFIED;
                         broker->producers[exited_prod->id] = nullptr;
                         delete exited_prod;
                     } else {
