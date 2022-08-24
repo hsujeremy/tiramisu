@@ -179,34 +179,37 @@ int BrokerManager::execute(const int sd, RequestedAction action,
     }
     ClientMetadata metadata = server->sd_client_map.at(sd);
     // TODO: Distinguish between client types
-    assert(metadata.type == PRODUCER);
-    Producer* producer = producers[metadata.idx];
-    assert(producer);
+    if (metadata.type == PRODUCER) {
+        Producer* producer = producers[metadata.idx];
+        assert(producer);
 
-    int result = 0;
-    switch (action) {
-        case BEGIN_TRANSACTION:
-            result = producer->begin_transaction();
-            break;
+        int result = 0;
+        switch (action) {
+            case BEGIN_TRANSACTION:
+                result = producer->begin_transaction();
+                break;
 
-        case SEND_RECORD:
-            result = producer->send_record(serialized_args);
-            break;
+            case SEND_RECORD:
+                result = producer->send_record(serialized_args);
+                break;
 
-        case ABORT_TRANSACTION:
-            result = producer->abort_transaction();
-            break;
+            case ABORT_TRANSACTION:
+                result = producer->abort_transaction();
+                break;
 
-        case COMMIT_TRANSACTION:
-            result = producer->commit_transaction(result_tables);
-            break;
+            case COMMIT_TRANSACTION:
+                result = producer->commit_transaction(result_tables);
+                break;
 
-        case UNKNOWN_ACTION:
-            result = 0;
-            break;
+            case UNKNOWN_ACTION:
+                result = 0;
+                break;
+        }
+        dbg_printf(DBG, "result from server: %d\n", result);
+        return result;
+    } else {
+        return 0;
     }
-    dbg_printf(DBG, "result from server: %d\n", result);
-    return result;
 }
 
 BrokerManager::~BrokerManager() {
