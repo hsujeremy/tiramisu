@@ -8,6 +8,8 @@
 #include "common.h"
 #include "storage.h"
 
+#define BUF_SIZE 1024
+#define MAX_PENDING 3
 #define MAX_PRODUCERS 15
 #define MAX_CONSUMERS 15
 #define MAX_CLIENTS 30

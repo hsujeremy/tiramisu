@@ -27,7 +27,7 @@ int main() {
     broker->server = server;
     server->broker = broker;
 
-    char buf[1024];
+    char buf[BUF_SIZE];
 
     // Set of socket descriptors
     fd_set readfds;
@@ -61,8 +61,8 @@ int main() {
     }
     dbg_printf(DBG, "Listening on port %d\n", PORT);
 
-    // Specify max of 3 pending connections for the master socket at any point
-    if (listen(master_socket, 3) < 0) {
+    // Specify maximum amount of pending connections for the master socket
+    if (listen(master_socket, MAX_PENDING) < 0) {
         perror("listen failed\n");
         exit(EXIT_FAILURE);
     }
@@ -133,7 +133,7 @@ int main() {
             for (size_t i = 0; i < MAX_CLIENTS; ++i) {
                 int sd = server->client_sockets[i];
                 if (FD_ISSET(sd, &readfds)) {
-                    ssize_t nread = read(sd, buf, 1024);
+                    ssize_t nread = read(sd, buf, BUF_SIZE);
                     if (!nread) {
                         // If peer disconnected, then close the socket
                         // descriptor and clean up the associated producer
