@@ -76,6 +76,7 @@ int Producer::abort_transaction() {
 }
 
 int Producer::commit_transaction(TableMap& result_tables) {
+    dbg_printf(DBG_COMMIT, "[Producer::commit_transaction] Start\n");
     streaming = false;
     for (auto const& topic_table : input_tables.map) {
         // Find corresponding result table or create if not found
@@ -91,6 +92,8 @@ int Producer::commit_transaction(TableMap& result_tables) {
     }
 
     // Finally, clean up input table map
+    dbg_printf(DBG_COMMIT,
+               "[Producer::commit_transaction] Cleaning up transaction\n");
     return cleanup_transaction();
 }
 

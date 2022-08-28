@@ -7,6 +7,7 @@
 
 #define PORT 8888
 #define DBG 1
+#define DBG_COMMIT 0
 
 // split_strings(str, delim)
 //     Splits `str` into substrings separated by `delim`.
