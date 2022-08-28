@@ -8,8 +8,7 @@
 struct Row {
     int data;
     std::time_t event_time;
-    std::time_t processing_time;
-
+    
     std::string serialize();
 };
 
