@@ -26,7 +26,8 @@ ssize_t Server::send_message(int socket, std::string payload) {
 
     printf("Sending message from server %zu\n", m.length);
     int r = send(socket, &m, sizeof(Message::length), 0);
-    // TODO: eventually the client should return something if there isn't space in the buffer
+    // TODO: eventually the client should return something if there isn't space
+    // in the buffer
     if (r < 0) {
         dbg_printf(DBG, "Unable to send message header\n");
         return -1;
@@ -42,9 +43,8 @@ ssize_t Server::send_message(int socket, std::string payload) {
 ssize_t Server::recv_message(int socket, std::string* payload) {
     // TODO: have clients send over data via messages
 
-    printf("from recv server\n");
-    char buf[BUF_SIZE] = {0};
-    ssize_t nread = read(socket, buf, BUF_SIZE);
+    char buf[BUFSIZE] = {0};
+    ssize_t nread = read(socket, buf, BUFSIZE);
     if (nread < 0) {
         // Do something
         return -1;
@@ -63,7 +63,7 @@ int main() {
     broker->server = server;
     server->broker = broker;
 
-    char buf[BUF_SIZE];
+    char buf[BUFSIZE];
 
     // Set of socket descriptors
     fd_set readfds;
@@ -158,43 +158,44 @@ int main() {
                     ClientMetadata metadata;
                     metadata.sock = new_socket;
                     metadata.type = UNSPECIFIED;
-                    server->sd_client_map.insert(
-                        std::make_pair(new_socket, metadata));
+                    server->sd_client_map.insert({new_socket, metadata});
                     break;
                 }
             }
-        } else {
-            // Handle IO operation on some other socket
-            for (size_t i = 0; i < MAX_CLIENTS; ++i) {
-                int sd = server->client_sockets[i];
-                if (FD_ISSET(sd, &readfds)) {
-                    std::string incoming;
-                    ssize_t nread = server->recv_message(sd, &incoming);
-                    assert(nread <= BUF_SIZE);
-                    strncpy(buf, incoming.c_str(), nread + 1);
-                    buf[nread] = '\0';
-                    if (!nread) {
-                        // If peer disconnected, then close the socket
-                        // descriptor and clean up the associated producer
-                        getpeername(sd, (struct sockaddr*)&addr,
-                                    (socklen_t*)&addrlen);
-                        dbg_printf(DBG, "Host disconnected with IP %s and port %d\n",
-                            inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
-                        close(sd);
-                        server->cleanup_client(i);
-                    } else {
-                        // Echo back the incoming message
-                        buf[nread] = '\0';
-                        dbg_printf(DBG, "From client: %s\n", buf);
-                        std::string request(buf);
-                        RequestedAction action = broker->parse_request(request);
-                        int result = broker->execute(sd, action, request);
-                        std::string serialized_result = std::to_string(result);
+            continue;
+        }
 
-                        server->send_message(sd, serialized_result);
-                    }
-                }
+        // Handle IO operation on some other socket
+        for (size_t i = 0; i < MAX_CLIENTS; ++i) {
+            int sd = server->client_sockets[i];
+            if (!FD_ISSET(sd, &readfds)) {
+                continue;
             }
+            std::string incoming;
+            ssize_t nread = server->recv_message(sd, &incoming);
+            if (!nread) {
+                // If peer disconnected, then close the socket descriptor and
+                // clean up the associated producer
+                getpeername(sd, (struct sockaddr*) &addr, (socklen_t*) &addrlen);
+                dbg_printf(DBG, "Host disconnected with IP %s and port %d\n",
+                           inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+                close(sd);
+                server->cleanup_client(i);
+                continue;
+            }
+            assert(nread <= BUFSIZE);
+            strncpy(buf, incoming.c_str(), nread + 1);
+            buf[nread] = '\0';
+            dbg_printf(DBG, "From client: %s\n", buf);
+
+            // Attempt to satisfy client request
+            std::string request(buf);
+            RequestedAction action = broker->parse_request(request);
+            int result = broker->execute(sd, action, request);
+            std::string serialized_result = std::to_string(result);
+
+            // Echo back a response
+            server->send_message(sd, serialized_result);
         }
     }
 
