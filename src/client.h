@@ -10,6 +10,7 @@ enum ClientState {
 };
 
 struct Client {
+    // Consider moving all class variables to protected or private
     int client_socket;
     ClientState state = DISCONNECTED;
 
@@ -29,6 +30,8 @@ struct Client {
     // ProducerClient::close_connection()
     //     Closes the connection the server.
     int disconnect_from_server();
+
+    // Include some sort of method to declare client type that HAS to be overridden
 };
 
 #endif

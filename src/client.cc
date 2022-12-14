@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <assert.h>
 #include <iostream>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -32,10 +33,17 @@ int Client::connect_to_server() {
     }
 
     char buf[1024] = {0};
-    ssize_t nread = read(client_socket, buf, 1024);
-    if (nread) {
-        dbg_printf(DBG, "From server: %s\n", buf);
+    Message m;
+    ssize_t nread = recv(client_socket, &m, sizeof(Message::length), 0);
+    if (nread <= 0) {
+        dbg_printf(DBG, "Error getting header from server\n");
+        return -1;
     }
+
+    size_t nbytes = m.length;
+    char payload[nbytes + 1];
+    nread = recv(client_socket, payload, nbytes, 0);
+    (void) nread;
 
     state = UNINITIALIZED;
     dbg_printf(DBG, "Producer connected at socket %d\n", client_socket);
@@ -51,15 +59,25 @@ int Client::make_request(const std::string request) {
         return -1;
     }
 
-    ssize_t nread = read(client_socket, buf, 1024);
-    if (!nread) {
-        perror("Server connection error\n");
+    // TODO: Wait for two responses from the server
+    // new two-request scheme from server
+    Message m;
+    ssize_t nread = recv(client_socket, &m, sizeof(Message::length), 0);
+    if (nread <= 0) {
+        dbg_printf(DBG, "Error getting header from server\n");
         return -1;
     }
 
-    buf[nread] = '\0';
-    std::string response(buf);
-    dbg_printf(DBG, "From server: %s\n", response.c_str());
+    // TODO: Move this into a general client::recv_message helper function
+    printf("buf %zu\n", m.length);
+    size_t nbytes = m.length;
+    char payload[nbytes + 1];
+    nread = recv(client_socket, payload, nbytes, 0);
+    assert(nread == nbytes);
+    payload[nbytes] = '\0';
+
+    std::string response(payload);
+    dbg_printf(DBG, "From server: %s\n", payload);
 
     // TODO: Modify to expect values other than ints
     int status;

@@ -35,6 +35,12 @@ struct Server {
     int client_sockets[MAX_CLIENTS] = {0};
     std::unordered_map<size_t, ClientMetadata> sd_client_map;
 
+    ssize_t send_message(int socket, std::string payload);
+
+    // recv_message(socket, payload)
+    //     Returns the number of bytes read and updates the payload.
+    ssize_t recv_message(int socket, std::string* payload);
+
     void cleanup_client(const int idx);
 };
 

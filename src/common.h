@@ -18,4 +18,9 @@ std::vector<std::string> split_strings(std::string str, const char delim);
 //     Prints the formatted string if `debug` is set to true.
 void dbg_printf(const bool debug, const char* format, ...);
 
+struct Message {
+    size_t length;
+    char* payload; // TODO: depending on how this is used, may not be needed
+};
+
 #endif

@@ -19,6 +19,42 @@ void handler(int signum) {
     terminate = 1;
 }
 
+ssize_t Server::send_message(int socket, std::string payload) {
+    Message m;
+    m.payload = (char*) payload.c_str();
+    m.length = strlen(m.payload);
+
+    printf("Sending message from server %zu\n", m.length);
+    int r = send(socket, &m, sizeof(Message::length), 0);
+    // TODO: eventually the client should return something if there isn't space in the buffer
+    if (r < 0) {
+        dbg_printf(DBG, "Unable to send message header\n");
+        return -1;
+    }
+    printf("about to send payload: %s\n", m.payload);
+    r = send(socket, (char*) payload.c_str(), m.length, 0);
+    if (r < 0) {
+        dbg_printf(DBG, "Unable to send message payload\n");
+    }
+    return r;
+}
+
+ssize_t Server::recv_message(int socket, std::string* payload) {
+    // TODO: have clients send over data via messages
+
+    printf("from recv server\n");
+    char buf[BUF_SIZE] = {0};
+    ssize_t nread = read(socket, buf, BUF_SIZE);
+    if (nread < 0) {
+        // Do something
+        return -1;
+    }
+    buf[nread] = '\0';
+    std::string serialized(buf);
+    *payload = serialized;
+    return nread;
+}
+
 int main() {
     assert(MAX_PRODUCERS + MAX_CONSUMERS == MAX_CLIENTS);
 
@@ -109,12 +145,11 @@ int main() {
                 exit(EXIT_FAILURE);
             }
 
-            dbg_printf(DBG, "New connection with socket fd %d, IP %s, and port number %d\n",
-                       new_socket, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+            dbg_printf(DBG, "New connection with socket fd %d, IP %s, and port "
+                       "number %d\n", new_socket, inet_ntoa(addr.sin_addr),
+                       ntohs(addr.sin_port));
 
-            if (send(new_socket, message.c_str(), message.length(), 0) < 0) {
-                perror("Error sending connection message\n");
-            }
+            [[maybe_unused]] int r = server->send_message(new_socket, message);
 
             // Add new socket to socket array
             for (size_t i = 0; i < MAX_CLIENTS; ++i) {
@@ -133,7 +168,11 @@ int main() {
             for (size_t i = 0; i < MAX_CLIENTS; ++i) {
                 int sd = server->client_sockets[i];
                 if (FD_ISSET(sd, &readfds)) {
-                    ssize_t nread = read(sd, buf, BUF_SIZE);
+                    std::string incoming;
+                    ssize_t nread = server->recv_message(sd, &incoming);
+                    assert(nread <= BUF_SIZE);
+                    strncpy(buf, incoming.c_str(), nread + 1);
+                    buf[nread] = '\0';
                     if (!nread) {
                         // If peer disconnected, then close the socket
                         // descriptor and clean up the associated producer
@@ -151,8 +190,8 @@ int main() {
                         RequestedAction action = broker->parse_request(request);
                         int result = broker->execute(sd, action, request);
                         std::string serialized_result = std::to_string(result);
-                        send(sd, serialized_result.c_str(),
-                             serialized_result.length(), 0);
+
+                        server->send_message(sd, serialized_result);
                     }
                 }
             }
