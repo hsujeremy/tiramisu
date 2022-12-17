@@ -33,7 +33,7 @@ struct Server {
     BrokerManager* broker = nullptr;
     int server_socket = -1;
     int client_sockets[MAX_CLIENTS] = {0};
-    std::unordered_map<size_t, ClientMetadata> sd_client_map;
+    std::unordered_map<size_t, ClientMetadata> sockfd2client;
 
     ssize_t send_message(int socket, std::string payload);
 

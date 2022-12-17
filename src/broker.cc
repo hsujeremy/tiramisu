@@ -164,7 +164,7 @@ int BrokerManager::init_producer(const int sd) {
         if (!producers[i]) {
             idx = i;
             producers[i] = new Producer(sd, idx);
-            ClientMetadata* metadata = &server->sd_client_map.at(sd);
+            ClientMetadata* metadata = &server->sockfd2client.at(sd);
             metadata->idx = i;
             metadata->type = PRODUCER;
             dbg_printf(DBG, "Created producer with id %d\n", idx);
@@ -180,7 +180,7 @@ int BrokerManager::init_consumer(const int sd) {
         if (!consumers[i]) {
             idx = i;
             consumers[i] = new Consumer(sd, idx);
-            ClientMetadata* metadata = &server->sd_client_map.at(sd);
+            ClientMetadata* metadata = &server->sockfd2client.at(sd);
             metadata->idx = i;
             metadata->type = CONSUMER;
             dbg_printf(DBG, "Created consumer with id %d\n", idx);
@@ -198,11 +198,11 @@ int BrokerManager::execute(const int sd, RequestedAction action,
         return init_consumer(sd);
     }
 
-    if (!server->sd_client_map.count(sd)) {
+    if (!server->sockfd2client.count(sd)) {
         perror("Socket descriptor not found in map!\n");
         return -1;
     }
-    ClientMetadata metadata = server->sd_client_map.at(sd);
+    ClientMetadata metadata = server->sockfd2client.at(sd);
 
     int result = 0;
     if (metadata.type == PRODUCER) {
@@ -289,12 +289,12 @@ BrokerManager::~BrokerManager() {
 
 void Server::cleanup_client(const int idx) {
     const int sd = client_sockets[idx];
-    if (!sd_client_map.count(sd)) {
+    if (!sockfd2client.count(sd)) {
         dbg_printf(DBG, "Socket not found in map\n");
         return;
     }
-    ClientMetadata metadata = sd_client_map.at(sd);
+    ClientMetadata metadata = sockfd2client.at(sd);
     broker->deallocate_client(metadata);
-    sd_client_map.erase(sd);
+    sockfd2client.erase(sd);
     client_sockets[idx] = 0;
 }

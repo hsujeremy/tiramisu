@@ -158,7 +158,7 @@ int main() {
                     ClientMetadata metadata;
                     metadata.sock = new_socket;
                     metadata.type = UNSPECIFIED;
-                    server->sd_client_map.insert({new_socket, metadata});
+                    server->sockfd2client.insert({new_socket, metadata});
                     break;
                 }
             }
